@@ -51,8 +51,6 @@ export const Main = () => {
         const { newUserId, newSessionId, players, solution_map } = await initializeUser(); 
         localStorage.setItem('rank_five_user_id', newUserId); 
         localStorage.setItem('rank_five_session_id', newSessionId); 
-        // localStorage.setItem('rank_five_session_status', String(0));
-        // localStorage.setItem('rank_five_session_attempts', String(0));
         
         dispatch(initializeGame({
           players: players,
