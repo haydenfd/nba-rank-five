@@ -3,14 +3,18 @@ import {
   SnapshotInterface,
   PlayerDataInterface,
   SolutionMapInterface,
+  AttemptsType,
 } from '../../Types/store';
+
+const savedAttempts = localStorage.getItem("rank_five_session_attempts");
+const initialAttempts = savedAttempts ? parseInt(savedAttempts, 10) : 0;
 
 const initialSnapshotState: SnapshotInterface = {
   players: [],
   guesses: [],
   solution_map: {},
   scores: [],
-  attempts: 0,
+  attempts: initialAttempts as AttemptsType,
 };
 
 interface InitializeGamePayload {
@@ -43,6 +47,7 @@ const snapshotSlice = createSlice({
     incrementAttempts: (state) => {
       if (state.attempts !== 2) {
         state.attempts += 1;
+        localStorage.setItem("rank_five_session_attempts", state.attempts.toString());
       }
     },
     mutateGuesses: (state, action) => {

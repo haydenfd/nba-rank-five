@@ -2,7 +2,6 @@ import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, Button, useDisclosure} from "@nextui-org/react";
 import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 
-
 export function GuideModal() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
