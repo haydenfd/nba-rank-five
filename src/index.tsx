@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { App } from "./App";
 import "./fonts.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { Provider } from "react-redux";
 import { store } from "./Store/store";
+import { Main } from "./Pages/Main";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <NextUIProvider>
     <Provider store={store}>
-      <App />
+      <Main />
     </Provider>
   </NextUIProvider>,
 );
