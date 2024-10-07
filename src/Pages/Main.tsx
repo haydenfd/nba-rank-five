@@ -7,13 +7,13 @@ import { RootState } from "../Store/store";
 import { Toaster, toast } from "sonner";
 import { SolutionModal } from "../Components/Modals/SolutionModal";
 import { useDisclosure } from "@nextui-org/react";
-import axios from "axios";
 import {
   initializeGame,
   resetGameState,
 } from "../Store/Snapshot/snapshotSlice";
 import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
 import { fetchSession, initializeNewSession } from "../Api/Lib/Session";
+import { createNewUser } from "../Api/Lib/User";
 
 export const Main = () => {
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
@@ -24,11 +24,14 @@ export const Main = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const initializeUser = async () => {
-    const response = await axios.post("http://localhost:8080/users/create");
-    const newUserId = response.data.user_id;
-    const newSessionId = response.data.session_id;
-    const players = response.data.players;
-    const solution_map = response.data.solution_map;
+    
+    const user = await createNewUser();
+
+    const newUserId = user.user_id;
+    const newSessionId = user.session_id;
+    const players = user.players;
+    const solution_map = user.solution_map;
+
     return {
       newUserId,
       newSessionId,
