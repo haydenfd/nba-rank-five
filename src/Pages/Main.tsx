@@ -47,7 +47,7 @@ export const Main = () => {
     // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session. 
 
 
-    // internal functions - retrieveSession, checkUser. 
+    // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session. 
     const retrieveSession = async (user_id: string | null, session_id: string | null) => {
 
       const session = await fetchSession(user_id, session_id);
