@@ -21,6 +21,7 @@ import {
   incrementAttempts,
 } from "../../Store/Snapshot/snapshotSlice";
 import axios from "axios";
+import { MAX_ATTEMPTS } from "../../Utils/globals";
 
 export const Drag = () => {
   const snap_players = useSelector(
@@ -101,7 +102,7 @@ export const Drag = () => {
 
   const isGameOver = useMemo(() => {
     const hasWon = score.length > 0 && score.every((_score) => _score === 0);
-    const hasLost = attempts === 2;
+    const hasLost = attempts === MAX_ATTEMPTS;
     return hasWon || hasLost;
   }, [score, attempts]);
 

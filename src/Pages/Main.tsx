@@ -42,6 +42,12 @@ export const Main = () => {
 
   useEffect(() => {
 
+    // (1) New user. Create new user and session
+    // (2) Old user, session over. Check local storage first to see session status. If status inactive, start new session. 
+    // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session. 
+
+
+    // internal functions - retrieveSession, checkUser. 
     const retrieveSession = async (user_id: string | null, session_id: string | null) => {
 
       const session = await fetchSession(user_id, session_id);
@@ -53,55 +59,73 @@ export const Main = () => {
       );
     };
 
-    const checkUser = async () => {
-      const storedUserId = localStorage.getItem("rank_five_user_id");
+    const createNewUser = async () => {
+      const { newUserId, newSessionId, players, solution_map } = await initializeUser();
+      localStorage.setItem("rank_five_user_id", newUserId);
+      localStorage.setItem("rank_five_session_id", newSessionId);
+      localStorage.setItem("rank_five_session_status", JSON.stringify(0));
+      dispatch(
+        initializeGame({
+          players: players,
+          solution_map: solution_map,
+        }),
+      );    
+    }
 
-      if (!storedUserId) {
-        const { newUserId, newSessionId, players, solution_map } =
-          await initializeUser();
-        localStorage.setItem("rank_five_user_id", newUserId);
-        localStorage.setItem("rank_five_session_id", newSessionId);
-        localStorage.setItem("rank_five_session_status", JSON.stringify(0));
-        dispatch(
-          initializeGame({
-            players: players,
-            solution_map: solution_map,
-          }),
-        );
-      } else {
-        // retrieve the current session.
-        if (
-          localStorage.getItem("rank_five_session_status") &&
-          Number(localStorage.getItem("rank_five_session_status")) !== 0
-        ) {
+    // main setup client func. Uses above internal funcs
+    const setupClient = async () => {
+  
+      const userIdLocalStorage = localStorage.getItem("rank_five_user_id");
+  
+      if (!userIdLocalStorage) {
+        // initialize new user here. 
+        await createNewUser();
+      }
+  
+      else {
+  
+        // check if session is active or expired. 
+        const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
+  
+        if (sessionStatusLocalStorage) {
 
-          const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+          const session_status = Number(JSON.parse(sessionStatusLocalStorage));
+  
+          // active session
+          if (session_status === 0) {
+            await retrieveSession(
+              localStorage.getItem("rank_five_user_id"),
+              localStorage.getItem("rank_five_session_id"),
+            );
+          }
+
+          // inactive session. Either user lost or won
+  
+          else {
+            const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
           
-          dispatch(resetGameState());
-
-          dispatch(
-            initializeGame({
-              players: session.players,
-              solution_map: session.solution_map,
-            }),
-          );
-
-          localStorage.setItem(
-            "rank_five_session_id",
-            session.session_id,
-          );
-          localStorage.setItem("rank_five_session_status", JSON.stringify(0));
-          localStorage.setItem("rank_five_session_attempts", JSON.stringify(0));
-        } else {
-          await retrieveSession(
-            localStorage.getItem("rank_five_user_id"),
-            localStorage.getItem("rank_five_session_id"),
-          );
+            dispatch(resetGameState());
+  
+            dispatch(
+              initializeGame({
+                players: session.players,
+                solution_map: session.solution_map,
+              }),
+            );
+  
+            localStorage.setItem(
+              "rank_five_session_id",
+              session.session_id,
+            );
+            localStorage.setItem("rank_five_session_status", JSON.stringify(0));
+            localStorage.setItem("rank_five_session_attempts", JSON.stringify(0));            
+          }
         }
       }
-    };
 
-    checkUser();
+    }
+
+    setupClient();
   }, []);
 
   useEffect(() => {
@@ -113,8 +137,8 @@ export const Main = () => {
         onOpen();
       } else {
         if (attempts === MAX_ATTEMPTS) {
-          onOpen();
           localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
+          onOpen();
         } else {
           toast(
             `You got ${correctGuesses} guess${
