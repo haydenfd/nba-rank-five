@@ -12,7 +12,7 @@ import {
   initializeGame,
   resetGameState,
 } from "../Store/Snapshot/snapshotSlice";
-import { MAX_ATTEMPTS } from "../Utils/globals";
+import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
 
 export const Main = () => {
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
@@ -114,7 +114,7 @@ export const Main = () => {
     if (score.length > 0) {
       const correctGuesses = score.filter((s) => s !== 1).length;
 
-      if (correctGuesses === 5) {
+      if (correctGuesses === CORRECT_GUESSES) {
         localStorage.setItem("rank_five_session_status", JSON.stringify(1));
         onOpen();
       } else {

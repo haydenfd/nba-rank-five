@@ -28,4 +28,9 @@
 - Current Streak
 - Attempts Distribution(when winning)
 - Average attempts / game
--
+
+
+
+## Anti-pattern
+
+Redux slice reducers are meant to be pure functions. Need to get rid of all local storage implementations inside these functions. 
