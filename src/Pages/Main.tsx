@@ -12,7 +12,6 @@ import {
   initializeGame,
   resetGameState,
 } from "../Store/Snapshot/snapshotSlice";
-import { PlayerDataInterface } from "../Types/store";
 import { MAX_ATTEMPTS } from "../Utils/globals";
 
 export const Main = () => {
