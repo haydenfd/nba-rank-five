@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Drag } from "../Components/Game/Draggable";
-import { GuessCrumbs } from "../Components/Game/Crumbs";
+import { GuessCrumbs } from "../Components/Game/GuessCrumbs";
 import { Nav } from "../Components/Nav";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Store/store";
