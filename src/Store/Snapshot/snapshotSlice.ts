@@ -5,14 +5,18 @@ import {
   SolutionMapInterface,
   AttemptsType,
   ScoresType,
-} from '../../Types/store';
+} from "../../Types/store";
 
 const initialSnapshotState: SnapshotInterface = {
   players: [],
   guesses: [],
   solution_map: {},
   scores: [],
-  attempts: localStorage.getItem("rank_five_session_attempts") ? Number(localStorage.getItem("rank_five_session_attempts")) as AttemptsType : 0 as AttemptsType,
+  attempts: localStorage.getItem("rank_five_session_attempts")
+    ? (Number(
+        localStorage.getItem("rank_five_session_attempts"),
+      ) as AttemptsType)
+    : (0 as AttemptsType),
 };
 
 interface InitializeGamePayload {
@@ -21,12 +25,10 @@ interface InitializeGamePayload {
 }
 
 const snapshotSlice = createSlice({
-
   name: "snapshot",
   initialState: initialSnapshotState,
 
   reducers: {
-
     resetGameState: (state) => {
       state.attempts = 0;
       state.players = [];
@@ -40,23 +42,29 @@ const snapshotSlice = createSlice({
       state.players = players;
       state.solution_map = solution_map;
       console.log(state.players);
-      console.log(state.solution_map)
-    },    
+      console.log(state.solution_map);
+    },
     incrementAttempts: (state) => {
-      if (state.attempts !== 2) {
+      if (state.attempts !== 3) {
         state.attempts += 1;
       }
-      localStorage.setItem("rank_five_session_attempts", JSON.stringify(state.attempts));
+      localStorage.setItem(
+        "rank_five_session_attempts",
+        JSON.stringify(state.attempts),
+      );
     },
     mutateGuesses: (state, action) => {
       state.guesses = action.payload;
+      localStorage.setItem(
+        "rank_five_last_guess",
+        JSON.stringify(state.guesses),
+      );
     },
 
     computeScore: (state) => {
       const temp_scores = [];
 
       if (state.guesses.length > 0) {
-
         for (let i = 0; i < state.guesses.length; i++) {
           const currPlayerId = state.guesses[i].PLAYER_ID;
           const currPlayerCorrectIdx = state.solution_map[currPlayerId];
@@ -68,8 +76,10 @@ const snapshotSlice = createSlice({
         }
 
         state.scores = temp_scores;
-        localStorage.setItem("rank_five_session_scores", JSON.stringify(state.scores));
-
+        localStorage.setItem(
+          "rank_five_session_scores",
+          JSON.stringify(state.scores),
+        );
       }
     },
   },
@@ -77,4 +87,10 @@ const snapshotSlice = createSlice({
 
 export default snapshotSlice.reducer;
 
-export const { initializeGame , computeScore, mutateGuesses, incrementAttempts, resetGameState} = snapshotSlice.actions;
+export const {
+  initializeGame,
+  computeScore,
+  mutateGuesses,
+  incrementAttempts,
+  resetGameState,
+} = snapshotSlice.actions;

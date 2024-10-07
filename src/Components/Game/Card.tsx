@@ -1,6 +1,14 @@
 import React from "react";
 
-export const Card = ({ id, name, ppg = ""}: { id: string; name: string, ppg: string }) => {
+export const Card = ({
+  id,
+  name,
+  ppg = "",
+}: {
+  id: string;
+  name: string;
+  ppg: string;
+}) => {
   const generatePlayerImg = (id: string) => {
     // let [first, ...second] = name.split(" ")
     // const base = "https://www.basketball-reference.com/req/202106291/images/headshots/";

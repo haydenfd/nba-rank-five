@@ -1,26 +1,37 @@
-import React from "react";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store/store";
-import { PlayerDataInterface } from "../../Types/store";
+import React, { useEffect, useState } from "react";
+import { generateScoresArray } from "../../Utils/game";
+import { PlayerDataInterface, SolutionMapInterface } from "../../Types/store";
 
-type GuessCrumbsType = {
-  isVisible: boolean
+interface GuessCrumbsProps {
+  guesses: PlayerDataInterface[];
+  solution_map: SolutionMapInterface;
+  isVisible?: boolean;
 }
 
-export const GuessCrumbs = (props: GuessCrumbsType) => {
+export const GuessCrumbs: React.FC<GuessCrumbsProps> = ({
+  guesses,
+  solution_map,
+  isVisible = true,
+}) => {
+  const [scores, setScores] = useState<number[]>([]);
 
-  const snapshot = useSelector((state: RootState) => state.snapshot);
+  useEffect(() => {
+    const temp = generateScoresArray(guesses, solution_map);
+    setScores(temp);
+  }, [guesses, solution_map]);
 
   return (
-    <div className={`w-full mx-auto flex justify-center ${props.isVisible ? 'visible' : 'invisible'}`}>
+    <div
+      className={`w-full mx-auto flex justify-center ${isVisible ? "visible" : "invisible"}`}
+    >
       <Breadcrumbs className="bg-white rounded mx-auto">
-        {snapshot.guesses &&
-          snapshot.scores &&
-          snapshot.guesses.map((item:PlayerDataInterface, idx:number) => (
+        {guesses &&
+          guesses.map((item: PlayerDataInterface, idx: number) => (
             <BreadcrumbItem
+              key={idx}
               classNames={{
-                item: `text-2xl ${snapshot.scores[idx] === 0 ? "text-green-400" : "text-red-400" }`,
+                item: `text-2xl ${scores[idx] === 0 ? "text-green-400" : "text-red-400"}`,
                 separator: `text-2xl text-black font-bold`,
               }}
               disableAnimation={true}

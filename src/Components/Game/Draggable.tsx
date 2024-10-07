@@ -1,18 +1,31 @@
-import React, {useState, useEffect, useMemo} from 'react'
-import { getListStyle, getItemStyle} from './DraggableUtils'
-import { Button } from '@nextui-org/react'
-import { computeScore, initializeGame, resetGameState } from '../../Store/Snapshot/snapshotSlice'
-import { PlayerDataInterface } from '../../Types/store'
-import { DropResult, DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd'
-import { Card } from './Card'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState, useEffect, useMemo } from "react";
+import { getListStyle, getItemStyle } from "./DraggableUtils";
+import { Button } from "@nextui-org/react";
+import {
+  computeScore,
+  initializeGame,
+  resetGameState,
+} from "../../Store/Snapshot/snapshotSlice";
+import { PlayerDataInterface } from "../../Types/store";
+import {
+  DropResult,
+  DragDropContext,
+  Draggable,
+  Droppable,
+} from "react-beautiful-dnd";
+import { Card } from "./Card";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
-import { mutateGuesses, incrementAttempts } from '../../Store/Snapshot/snapshotSlice'
-import axios from 'axios'
+import {
+  mutateGuesses,
+  incrementAttempts,
+} from "../../Store/Snapshot/snapshotSlice";
+import axios from "axios";
 
 export const Drag = () => {
-
-  const snap_players = useSelector((state: RootState) => state.snapshot.players);
+  const snap_players = useSelector(
+    (state: RootState) => state.snapshot.players,
+  );
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
   const score = useSelector((state: RootState) => state.snapshot.scores);
 
@@ -24,7 +37,7 @@ export const Drag = () => {
     if (snap_players && snap_players.length > 0) {
       setPlayers(snap_players);
     }
-  }, [snap_players]); 
+  }, [snap_players]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -37,12 +50,10 @@ export const Drag = () => {
     const destDroppableId = destination.droppableId;
 
     if (srcDroppableId === destDroppableId) {
-      
       const list = srcDroppableId === "droppable" ? [...players] : [...guesses];
       const [removed] = list.splice(srcIndex, 1);
       list.splice(destIndex, 0, removed);
       srcDroppableId === "droppable" ? setPlayers(list) : setGuesses(list);
-
     } else {
       const sourceList =
         srcDroppableId === "droppable" ? [...players] : [...guesses];
@@ -54,7 +65,6 @@ export const Drag = () => {
       if (srcDroppableId === "droppable") {
         setPlayers(sourceList);
         setGuesses(destList);
-
       } else {
         setPlayers(destList);
         setGuesses(sourceList);
@@ -66,40 +76,38 @@ export const Drag = () => {
     dispatch(incrementAttempts());
     dispatch(mutateGuesses(guesses));
     dispatch(computeScore());
-
-
-  }
+  };
 
   const handleInitializeGame = async () => {
-    const endpoint = 'http://localhost:8080/session/create';
+    const endpoint = "http://localhost:8080/session/create";
 
     const response = await axios.post(endpoint, {
-      user_id: localStorage.getItem('rank_five_user_id')
+      user_id: localStorage.getItem("rank_five_user_id"),
     });
 
     dispatch(resetGameState());
 
-    dispatch(initializeGame({
-      players: response.data.players,
-      solution_map: response.data.solution_map,
-    }))
+    dispatch(
+      initializeGame({
+        players: response.data.players,
+        solution_map: response.data.solution_map,
+      }),
+    );
 
-    localStorage.setItem('rank_five_session_id', response.data.session_id)
+    localStorage.setItem("rank_five_session_id", response.data.session_id);
 
     setGuesses([]);
-  }
+  };
 
   const isGameOver = useMemo(() => {
     const hasWon = score.length > 0 && score.every((_score) => _score === 0);
     const hasLost = attempts === 2;
     return hasWon || hasLost;
-  }, [score, attempts]); 
-
+  }, [score, attempts]);
 
   return (
     <>
       <div className="w-full flex flex-col items-center space-y-10 mt-10">
-      
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="w-[40%] flex-nowrap">
@@ -131,7 +139,11 @@ export const Drag = () => {
                               provided.draggableProps.style,
                             )}
                           >
-                            <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} ppg={String(player.PPG)}/>
+                            <Card
+                              id={player.PLAYER_ID}
+                              name={player.PLAYER_NAME}
+                              ppg={String(player.PPG)}
+                            />
                           </div>
                         )}
                       </Draggable>
@@ -172,7 +184,11 @@ export const Drag = () => {
                               provided.draggableProps.style,
                             )}
                           >
-                            <Card id={guess.PLAYER_ID} name={guess.PLAYER_NAME} ppg={String(guess.PPG)}/>
+                            <Card
+                              id={guess.PLAYER_ID}
+                              name={guess.PLAYER_NAME}
+                              ppg={String(guess.PPG)}
+                            />
                           </div>
                         )}
                       </Draggable>
@@ -183,21 +199,19 @@ export const Drag = () => {
               </Droppable>
             </div>
           </DragDropContext>
-        </div>      
-      <section className="w-full">
-           <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-14">
-           <Button
-            onClick={isGameOver ? handleInitializeGame : handleSubmitAttempt} 
-            isDisabled={!(guesses.length === 5)} 
-            className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
+        </div>
+        <section className="w-full">
+          <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-14">
+            <Button
+              onClick={isGameOver ? handleInitializeGame : handleSubmitAttempt}
+              isDisabled={!(guesses.length === 5)}
+              className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
             >
-              {isGameOver ? "Start New Game" : "Submit"} 
+              {isGameOver ? "Start New Game" : "Submit"}
             </Button>
-           </div>
+          </div>
         </section>
-
       </div>
     </>
-  )
-}
-
+  );
+};

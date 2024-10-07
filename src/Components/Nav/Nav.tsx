@@ -2,7 +2,6 @@ import React from "react";
 import { GuideModal, StatsModal } from "../Modals";
 
 export const Nav = () => {
-
   return (
     <div className="bg-gray-700 text-white text-center drop-shadow-xl flex flex-row justify-between items-stretch py-2">
       <div className="w-[15%] py-2 flex items-center justify-center">
@@ -14,7 +13,7 @@ export const Nav = () => {
         </h1>
       </div>
       <div className="w-[15%] py-2 flex items-center justify-center flex-shrink">
-          <GuideModal />
+        <GuideModal />
       </div>
     </div>
   );
