@@ -14,7 +14,7 @@ export const GuessCrumbs = (props: GuessCrumbsType) => {
 
   return (
     <div className={`w-full mx-auto flex justify-center ${props.isVisible ? 'visible' : 'invisible'}`}>
-      <Breadcrumbs className="bg-white p-4 rounded mx-auto">
+      <Breadcrumbs className="bg-white rounded mx-auto">
         {snapshot.guesses &&
           snapshot.scores &&
           snapshot.guesses.map((item:PlayerDataInterface, idx:number) => (

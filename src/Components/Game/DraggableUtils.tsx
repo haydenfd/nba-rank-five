@@ -17,7 +17,7 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
 const getListStyle = (
     snapshot: DroppableStateSnapshot,
     ): React.CSSProperties => ({
-    background: snapshot.isDraggingOver ? "lightblue" : "lightgrey",
+    background: snapshot.isDraggingOver ? "darkblue" : "#98989c",
     padding: grid,
     width: "100%",
     height: `${calculatedHeight}px`,

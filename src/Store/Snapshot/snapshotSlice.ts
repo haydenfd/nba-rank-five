@@ -12,7 +12,7 @@ const initialSnapshotState: SnapshotInterface = {
   guesses: [],
   solution_map: {},
   scores: [],
-  attempts: 0,
+  attempts: localStorage.getItem("rank_five_session_attempts") ? Number(localStorage.getItem("rank_five_session_attempts")) as AttemptsType : 0 as AttemptsType,
 };
 
 interface InitializeGamePayload {
@@ -46,6 +46,7 @@ const snapshotSlice = createSlice({
       if (state.attempts !== 2) {
         state.attempts += 1;
       }
+      localStorage.setItem("rank_five_session_attempts", JSON.stringify(state.attempts));
     },
     mutateGuesses: (state, action) => {
       state.guesses = action.payload;
@@ -67,6 +68,8 @@ const snapshotSlice = createSlice({
         }
 
         state.scores = temp_scores;
+        localStorage.setItem("rank_five_session_scores", JSON.stringify(state.scores));
+
       }
     },
   },

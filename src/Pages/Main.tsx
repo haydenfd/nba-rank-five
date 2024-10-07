@@ -8,7 +8,7 @@ import { Toaster, toast } from "sonner";
 import { SolutionModal } from "../Components/Modals/SolutionModal"; 
 import { useDisclosure } from "@nextui-org/react"; 
 import axios from "axios";
-import { initializeGame } from "../Store/Snapshot/snapshotSlice";
+import { initializeGame, resetGameState } from "../Store/Snapshot/snapshotSlice";
 
 export const Main = () => {
 
@@ -51,7 +51,7 @@ export const Main = () => {
         const { newUserId, newSessionId, players, solution_map } = await initializeUser(); 
         localStorage.setItem('rank_five_user_id', newUserId); 
         localStorage.setItem('rank_five_session_id', newSessionId); 
-        
+        localStorage.setItem("rank_five_session_status", JSON.stringify(0));
         dispatch(initializeGame({
           players: players,
           solution_map: solution_map,
@@ -59,8 +59,25 @@ export const Main = () => {
       } else {
 
         // retrieve the current session. 
+        if (localStorage.getItem('rank_five_session_status') && Number(localStorage.getItem('rank_five_session_status')) !== 0) {
+          const endpoint = 'http://localhost:8080/session/create';
 
-        if (localStorage.getItem('rank_five_user_id') && localStorage.getItem('rank_five_session_id')) {
+          const response = await axios.post(endpoint, {
+            user_id: localStorage.getItem('rank_five_user_id')
+          });
+      
+          dispatch(resetGameState());
+      
+          dispatch(initializeGame({
+            players: response.data.players,
+            solution_map: response.data.solution_map,
+          }))
+      
+          localStorage.setItem('rank_five_session_id', response.data.session_id)
+          localStorage.setItem("rank_five_session_status", JSON.stringify(0));
+          localStorage.setItem("rank_five_session_attempts", JSON.stringify(0));
+      
+        } else {
           await fetchSession(localStorage.getItem('rank_five_user_id'), localStorage.getItem('rank_five_session_id'));
 
         }
@@ -77,10 +94,12 @@ export const Main = () => {
       const correctGuesses = score.filter((s) => s !== 1).length;
 
       if (correctGuesses === 5) {
+        localStorage.setItem("rank_five_session_status", JSON.stringify(1));
         onOpen();
       } else {
         if (attempts === 2) {
           onOpen();
+          localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
         } 
         else {
           toast(

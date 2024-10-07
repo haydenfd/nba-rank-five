@@ -67,14 +67,6 @@ export const Drag = () => {
     dispatch(mutateGuesses(guesses));
     dispatch(computeScore());
 
-    // const endpoint = `http://localhost:8080/session/update/${localStorage.getItem('rank_five_user_id')}/${localStorage.getItem('rank_five_session_id')}`;
-
-    // const response = await axios.put(endpoint, {
-    //   attempts: attempts,
-    //   session_active: !isGameOver,
-    // });
-
-    // console.log(response);
 
   }
 
@@ -106,7 +98,7 @@ export const Drag = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center space-y-10 mt-10 bg-green-500">
+      <div className="w-full flex flex-col items-center space-y-10 mt-10">
       
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
@@ -133,7 +125,7 @@ export const Drag = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`${false ? "pointer-events-none bg-gray-400" : "pointer-events-auto"}`}
+                            className={`${false ? "pointer-events-none" : "pointer-events-auto"}`}
                             style={getItemStyle(
                               snapshot.isDragging,
                               provided.draggableProps.style,
