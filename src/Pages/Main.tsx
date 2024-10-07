@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Drag } from "../Components/Game/Draggable";
 import { GuessCrumbs } from "../Components/Game/GuessCrumbs";
 import { Nav } from "../Components/Nav/Nav";
@@ -14,12 +14,14 @@ import {
 import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
 import { fetchSession, initializeNewSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
-import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
+import { resetGameLocalStorage, initializeNewUserLocalStorage, generateScoresArray } from "../Utils/game";
 export const Main = () => {
+
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
-  const score = useSelector((state: RootState) => state.snapshot.scores);
+  // const score = useSelector((state: RootState) => state.snapshot.scores);
   const snapshot = useSelector((state: RootState) => state.snapshot);
   const dispatch = useDispatch();
+  const [correct, setCorrect] = useState<number>(0);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -89,26 +91,30 @@ export const Main = () => {
   
       else {
   
+        console.log("92");
         // check if session is active or expired. 
         const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
-  
+
         if (sessionStatusLocalStorage) {
+          console.log("97");
 
           const session_status = Number(JSON.parse(sessionStatusLocalStorage));
   
           // active session
           if (session_status === 0) {
-            await retrieveSession(
-              localStorage.getItem("rank_five_user_id"),
-              localStorage.getItem("rank_five_session_id"),
-            );
+            console.log("103");
+
+            //TODO: Check. May need to do a dispatch to update last guess, attempts, status
+            await retrieveSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id")); 
           }
 
           // inactive session. Either user lost or won
   
           else {
+            console.log("112");
+
             const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
-          
+            resetGameLocalStorage(session.session_id);
             dispatch(resetGameState());
   
             dispatch(
@@ -116,14 +122,7 @@ export const Main = () => {
                 players: session.players,
                 solution_map: session.solution_map,
               }),
-            );
-  
-            localStorage.setItem(
-              "rank_five_session_id",
-              session.session_id,
-            );
-            localStorage.setItem("rank_five_session_status", JSON.stringify(0));
-            localStorage.setItem("rank_five_session_attempts", JSON.stringify(0));            
+            );            
           }
         }
       }
@@ -134,39 +133,57 @@ export const Main = () => {
   }, []);
 
   useEffect(() => {
-    if (score.length > 0) {
-      const correctGuesses = score.filter((s) => s !== 1).length;
+    console.log("UseEffect ran at 134")
+    // Problem - this use effect runs on refreshing website. Right after game is done. 
 
-      if (correctGuesses === CORRECT_GUESSES) {
-        localStorage.setItem("rank_five_session_status", JSON.stringify(1));
-        onOpen();
-      } else {
-        if (attempts === MAX_ATTEMPTS) {
+    if (attempts > 0 && localStorage.getItem("rank_five_session_status") && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) === 0) {
+      console.log('Check condition in 138');
+      const guessesLocalStorage = localStorage.getItem("rank_five_last_guess");
+      console.log(JSON.parse(guessesLocalStorage || ""));
+
+      if (guessesLocalStorage) {
+        console.log("141");
+        const scores_array = generateScoresArray(JSON.parse(guessesLocalStorage), snapshot.solution_map);
+        const correct_score = scores_array.filter(item => item === 0).length;
+        setCorrect(correct_score);
+        console.log(correct);
+        // user won
+        if (correct_score === CORRECT_GUESSES) {
+          localStorage.setItem("rank_five_session_status", JSON.stringify(1));
+          console.log("Winner winner chicken dinner");
+          onOpen();
+        } 
+        else if (attempts === MAX_ATTEMPTS) {
           localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
           onOpen();
-        } else {
-          toast(
-            `You got ${correctGuesses} guess${
-              correctGuesses === 1 ? "" : "es"
-            } right!`,
-            {
-              position: "top-center",
-              duration: 3000,
-            },
-          );
+          console.log("142 ran");
+        }
+        else {
+            toast(
+              `You got ${correct_score} guess${
+                correct === 1 ? "" : "es"
+              } right!`,
+              {
+                position: "top-center",
+                duration: 3000,
+              },
+            );
         }
       }
+    
     }
-  }, [score, attempts]);
+  }, [attempts]);
 
   return (
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
       <Toaster position="top-center" />
       <SolutionModal
-        correctGuesses={score.filter((s) => s !== 1).length}
+        // correctGuesses={score.filter((s) => s !== 1).length}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
+        correctGuesses={correct}
+
       />
       <section className="w-3/5 mx-auto text-center my-8">
         <h2 className="font-bold text-white text-3xl">

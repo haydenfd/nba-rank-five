@@ -4,14 +4,12 @@ import {
   PlayerDataInterface,
   SolutionMapInterface,
   AttemptsType,
-  ScoresType,
 } from "../../Types/store";
 
 const initialSnapshotState: SnapshotInterface = {
   players: [],
   guesses: [],
   solution_map: {},
-  scores: [],
   attempts: localStorage.getItem("rank_five_session_attempts")
     ? (Number(
         localStorage.getItem("rank_five_session_attempts"),
@@ -33,7 +31,6 @@ const snapshotSlice = createSlice({
       state.attempts = 0;
       state.players = [];
       state.guesses = [];
-      state.scores = [];
       state.solution_map = {};
     },
 
@@ -41,46 +38,15 @@ const snapshotSlice = createSlice({
       const { players, solution_map } = action.payload;
       state.players = players;
       state.solution_map = solution_map;
-      console.log(state.players);
-      console.log(state.solution_map);
+
     },
     incrementAttempts: (state) => {
-      if (state.attempts !== 3) {
-        state.attempts += 1;
-      }
-      localStorage.setItem(
-        "rank_five_session_attempts",
-        JSON.stringify(state.attempts),
-      );
+      const curr_state = state.attempts + 1;
+      state.attempts = curr_state as AttemptsType;
+      console.log(curr_state);
     },
     mutateGuesses: (state, action) => {
       state.guesses = action.payload;
-      localStorage.setItem(
-        "rank_five_last_guess",
-        JSON.stringify(state.guesses),
-      );
-    },
-
-    computeScore: (state) => {
-      const temp_scores = [];
-
-      if (state.guesses.length > 0) {
-        for (let i = 0; i < state.guesses.length; i++) {
-          const currPlayerId = state.guesses[i].PLAYER_ID;
-          const currPlayerCorrectIdx = state.solution_map[currPlayerId];
-          let diff = Math.abs(i - currPlayerCorrectIdx);
-          if (diff > 0) {
-            diff = 1;
-          }
-          temp_scores.push(diff);
-        }
-
-        state.scores = temp_scores;
-        localStorage.setItem(
-          "rank_five_session_scores",
-          JSON.stringify(state.scores),
-        );
-      }
     },
   },
 });
@@ -89,7 +55,6 @@ export default snapshotSlice.reducer;
 
 export const {
   initializeGame,
-  computeScore,
   mutateGuesses,
   incrementAttempts,
   resetGameState,

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { getListStyle, getItemStyle } from "./DraggableUtils";
 import { Button } from "@nextui-org/react";
 import {
-  computeScore,
   initializeGame,
   resetGameState,
 } from "../../Store/Snapshot/snapshotSlice";
@@ -20,7 +19,8 @@ import {
   mutateGuesses,
   incrementAttempts,
 } from "../../Store/Snapshot/snapshotSlice";
-import axios from "axios";
+import { initializeNewSession } from "../../Api/Lib/Session";
+import { resetGameLocalStorage } from "../../Utils/game";
 import { MAX_ATTEMPTS } from "../../Utils/globals";
 
 export const Drag = () => {
@@ -28,7 +28,6 @@ export const Drag = () => {
     (state: RootState) => state.snapshot.players,
   );
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
-  const score = useSelector((state: RootState) => state.snapshot.scores);
 
   const dispatch = useDispatch();
   const [players, setPlayers] = useState<PlayerDataInterface[]>(snap_players);
@@ -73,38 +72,33 @@ export const Drag = () => {
     }
   };
 
-  const handleSubmitAttempt = async () => {
-    dispatch(incrementAttempts());
-    dispatch(mutateGuesses(guesses));
-    dispatch(computeScore());
+  const HandleSubmitAttempt = async () => {
+    
+    // Increment attempts across store and local storage. 
+    // Do bounds checking here because useSelector is async. 
+    if (attempts < MAX_ATTEMPTS) {
+      dispatch(incrementAttempts());
+      localStorage.setItem("rank_five_session_attempts", JSON.stringify(attempts + 1));
+
+      dispatch(mutateGuesses(guesses));
+      localStorage.setItem("rank_five_last_guess", JSON.stringify(guesses));
+    }
   };
 
-  const handleInitializeGame = async () => {
-    const endpoint = "http://localhost:8080/session/create";
-
-    const response = await axios.post(endpoint, {
-      user_id: localStorage.getItem("rank_five_user_id"),
-    });
-
+  const startNewGame = async () => {
+    const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+    resetGameLocalStorage(session.session_id);
     dispatch(resetGameState());
+    setGuesses([]);
 
     dispatch(
       initializeGame({
-        players: response.data.players,
-        solution_map: response.data.solution_map,
+        players: session.players,
+        solution_map: session.solution_map,
       }),
-    );
+    );     
+  }
 
-    localStorage.setItem("rank_five_session_id", response.data.session_id);
-
-    setGuesses([]);
-  };
-
-  const isGameOver = useMemo(() => {
-    const hasWon = score.length > 0 && score.every((_score) => _score === 0);
-    const hasLost = attempts === MAX_ATTEMPTS;
-    return hasWon || hasLost;
-  }, [score, attempts]);
 
   return (
     <>
@@ -204,11 +198,11 @@ export const Drag = () => {
         <section className="w-full">
           <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-14">
             <Button
-              onClick={isGameOver ? handleInitializeGame : handleSubmitAttempt}
+              onClick={attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) !== 0 ? startNewGame : HandleSubmitAttempt}
               isDisabled={!(guesses.length === 5)}
               className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
             >
-              {isGameOver ? "Start New Game" : "Submit"}
+              {attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) !== 0? "Start New Game" : "Submit"}
             </Button>
           </div>
         </section>

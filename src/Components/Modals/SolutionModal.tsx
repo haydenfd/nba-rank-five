@@ -6,7 +6,7 @@ import { Card } from "../Game/Card";
 import { PlayerDataInterface } from "../../Types/store";
 
 interface SolutionModalProps {
-  correctGuesses: number;
+  correctGuesses?: number;
   isOpen: boolean;
   onOpenChange: () => void;
 }

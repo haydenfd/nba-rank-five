@@ -14,7 +14,6 @@ interface SolutionMapInterface {
   [key: string]: number;
 }
 
-type ScoresType = number[];
 
 type AttemptsType = 0 | 1 | 2 | 3;
 
@@ -23,7 +22,6 @@ interface SnapshotInterface {
   guesses: PlayerDataInterface[];
   solution_map: SolutionMapInterface;
   attempts: AttemptsType;
-  scores: ScoresType;
 }
 
 export type {
@@ -31,5 +29,4 @@ export type {
   SnapshotInterface,
   SolutionMapInterface,
   AttemptsType,
-  ScoresType,
 };
