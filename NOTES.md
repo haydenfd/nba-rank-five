@@ -16,6 +16,10 @@
 - User_id
 - Session_id
 - Session_status
+- Attempts
+    - Fetch solution map
+    - Compute score using solution map and guesses
+- Last guess snapshot
 
 - Only update sessions after the session is over. Until then, keep it in local storage.
 - Need to keep last guesses in local storage. Will need to compute scores using param solution map and last guesses.

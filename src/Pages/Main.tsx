@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Drag } from "../Components/Game/Draggable";
 import { GuessCrumbs } from "../Components/Game/GuessCrumbs";
-import { Nav } from "../Components/Nav";
+import { Nav } from "../Components/Nav/Nav";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Store/store";
 import { Toaster, toast } from "sonner";
@@ -14,7 +14,7 @@ import {
 import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
 import { fetchSession, initializeNewSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
-
+import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 export const Main = () => {
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
   const score = useSelector((state: RootState) => state.snapshot.scores);
@@ -61,15 +61,12 @@ export const Main = () => {
 
     const createNewUser = async () => {
       const { newUserId, newSessionId, players, solution_map } = await initializeUser();
-      localStorage.setItem("rank_five_user_id", newUserId);
-      localStorage.setItem("rank_five_session_id", newSessionId);
-      localStorage.setItem("rank_five_session_status", JSON.stringify(0));
-      dispatch(
-        initializeGame({
-          players: players,
-          solution_map: solution_map,
-        }),
-      );    
+      return {
+        newUserId,
+        newSessionId,
+        players,
+        solution_map
+      };
     }
 
     // main setup client func. Uses above internal funcs
@@ -78,8 +75,16 @@ export const Main = () => {
       const userIdLocalStorage = localStorage.getItem("rank_five_user_id");
   
       if (!userIdLocalStorage) {
-        // initialize new user here. 
-        await createNewUser();
+        
+        // initialize new user
+        const {newUserId, newSessionId, players, solution_map} = await createNewUser();
+        initializeNewUserLocalStorage(newUserId, newSessionId);
+        dispatch(
+          initializeGame({
+            players: players,
+            solution_map: solution_map,
+          }),
+        );    
       }
   
       else {

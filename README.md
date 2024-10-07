@@ -7,6 +7,6 @@ Visit the game here:
 
 Frontend - React, TypeScript, Redux, Axios, TailwindCSS, NextUI, RadixUI, Sonner, Framer Motion, React Beautiful DnD. 
 
-Backend - Node
+Backend - Node, Mongoose ODM.
 
-Database - MongoDB
+Database - MongoDB.
