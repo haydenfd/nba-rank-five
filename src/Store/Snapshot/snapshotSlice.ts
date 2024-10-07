@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   SnapshotInterface,
   PlayerDataInterface,
-  SolutionMapInterface,
   AttemptsType,
 } from "../../Types/store";
 
@@ -19,7 +18,6 @@ const initialSnapshotState: SnapshotInterface = {
 
 interface InitializeGamePayload {
   players: PlayerDataInterface[];
-  solution_map: SolutionMapInterface;
 }
 
 const snapshotSlice = createSlice({
@@ -35,10 +33,8 @@ const snapshotSlice = createSlice({
     },
 
     initializeGame: (state, action: PayloadAction<InitializeGamePayload>) => {
-      const { players, solution_map } = action.payload;
+      const { players } = action.payload;
       state.players = players;
-      state.solution_map = solution_map;
-
     },
     incrementAttempts: (state) => {
       const curr_state = state.attempts + 1;

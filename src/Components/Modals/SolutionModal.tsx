@@ -4,17 +4,20 @@ import { RootState } from "../../Store/store";
 import { useSelector } from "react-redux";
 import { Card } from "../Game/Card";
 import { PlayerDataInterface } from "../../Types/store";
+import { CORRECT_GUESSES } from "../../Utils/globals";
 
 interface SolutionModalProps {
   correctGuesses?: number;
   isOpen: boolean;
   onOpenChange: () => void;
+  attempts? : number, 
 }
 
 export const SolutionModal: React.FC<SolutionModalProps> = ({
   correctGuesses,
   isOpen,
   onOpenChange,
+  attempts,
 }) => {
   const solution = structuredClone(
     useSelector((state: RootState) => state.snapshot.players),
@@ -31,15 +34,18 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
         <ModalContent>
           <>
             <ModalHeader
-              className={`${correctGuesses === 5 ? "text-green-600" : "text-red-400"} text-center text-2xl font-bold flex flex-1 flex-col`}
+              className={`${correctGuesses === CORRECT_GUESSES ? "text-green-600" : "text-red-400"} text-center text-2xl font-bold flex flex-1 flex-col`}
             >
-              {correctGuesses === 5 ? "You won!" : "You lost!"}
+              {correctGuesses ===  CORRECT_GUESSES? "You won!" : "You lost!"}
             </ModalHeader>
             <ModalBody>
-              {correctGuesses === 5 ? (
-                ""
+              {correctGuesses === CORRECT_GUESSES ? (
+                <div>
+                  <h1>You took {attempts} tries!</h1>
+                </div>
               ) : (
                 <div className="w-full flex flex-col gap-4">
+                  <h1>You took {attempts} tries!</h1>
                   {solution.map(
                     (player: PlayerDataInterface, index: number) => (
                       <>

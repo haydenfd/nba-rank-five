@@ -1,5 +1,6 @@
 import React from "react";
-import { GuideModal, StatsModal } from "../Modals";
+import { GuideModal } from "../Modals/GuideModal";
+import { StatsModal } from "../Modals/StatsModal";
 
 export const Nav = () => {
   return (

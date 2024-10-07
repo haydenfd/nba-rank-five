@@ -12,16 +12,17 @@ import {
   resetGameState,
 } from "../Store/Snapshot/snapshotSlice";
 import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
-import { fetchSession, initializeNewSession } from "../Api/Lib/Session";
+import { evaluateAttempt, fetchSession, initializeNewSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
-import { resetGameLocalStorage, initializeNewUserLocalStorage, generateScoresArray } from "../Utils/game";
+import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 export const Main = () => {
 
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
-  // const score = useSelector((state: RootState) => state.snapshot.scores);
   const snapshot = useSelector((state: RootState) => state.snapshot);
+  const [scores, setScores] = useState<number[]>([]);
   const dispatch = useDispatch();
   const [correct, setCorrect] = useState<number>(0);
+  
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -32,13 +33,11 @@ export const Main = () => {
     const newUserId = user.user_id;
     const newSessionId = user.session_id;
     const players = user.players;
-    const solution_map = user.solution_map;
 
     return {
       newUserId,
       newSessionId,
       players,
-      solution_map,
     };
   };
 
@@ -56,18 +55,16 @@ export const Main = () => {
       dispatch(
         initializeGame({
           players: session.players,
-          solution_map: session.solution_map,
         }),
       );
     };
 
     const createNewUser = async () => {
-      const { newUserId, newSessionId, players, solution_map } = await initializeUser();
+      const { newUserId, newSessionId, players } = await initializeUser();
       return {
         newUserId,
         newSessionId,
         players,
-        solution_map
       };
     }
 
@@ -79,12 +76,11 @@ export const Main = () => {
       if (!userIdLocalStorage) {
         
         // initialize new user
-        const {newUserId, newSessionId, players, solution_map} = await createNewUser();
+        const {newUserId, newSessionId, players} = await createNewUser();
         initializeNewUserLocalStorage(newUserId, newSessionId);
         dispatch(
           initializeGame({
             players: players,
-            solution_map: solution_map,
           }),
         );    
       }
@@ -120,7 +116,6 @@ export const Main = () => {
             dispatch(
               initializeGame({
                 players: session.players,
-                solution_map: session.solution_map,
               }),
             );            
           }
@@ -133,45 +128,55 @@ export const Main = () => {
   }, []);
 
   useEffect(() => {
-    console.log("UseEffect ran at 134")
     // Problem - this use effect runs on refreshing website. Right after game is done. 
-
-    if (attempts > 0 && localStorage.getItem("rank_five_session_status") && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) === 0) {
-      console.log('Check condition in 138');
-      const guessesLocalStorage = localStorage.getItem("rank_five_last_guess");
-      console.log(JSON.parse(guessesLocalStorage || ""));
-
-      if (guessesLocalStorage) {
-        console.log("141");
-        const scores_array = generateScoresArray(JSON.parse(guessesLocalStorage), snapshot.solution_map);
-        const correct_score = scores_array.filter(item => item === 0).length;
-        setCorrect(correct_score);
-        console.log(correct);
-        // user won
-        if (correct_score === CORRECT_GUESSES) {
-          localStorage.setItem("rank_five_session_status", JSON.stringify(1));
-          console.log("Winner winner chicken dinner");
-          onOpen();
-        } 
-        else if (attempts === MAX_ATTEMPTS) {
-          localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
-          onOpen();
-          console.log("142 ran");
+      if (attempts > 0) {
+        const foo = async () => {
+          const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
+          const result = await evaluateAttempt(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"), guessesArray, attempts);
+          console.log(result);
+          setScores(result?.scores);
         }
-        else {
-            toast(
-              `You got ${correct_score} guess${
-                correct === 1 ? "" : "es"
-              } right!`,
-              {
-                position: "top-center",
-                duration: 3000,
-              },
-            );
-        }
+  
+        foo();
       }
+      
+    // if (attempts > 0 && localStorage.getItem("rank_five_session_status") && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) === 0) {
+    //   console.log('Check condition in 138');
+    //   const guessesLocalStorage = localStorage.getItem("rank_five_last_guess");
+    //   console.log(JSON.parse(guessesLocalStorage || ""));
+
+    //   if (guessesLocalStorage) {
+    //     console.log("141");
+    //     const scores_array = generateScoresArray(JSON.parse(guessesLocalStorage), snapshot.solution_map);
+    //     const correct_score = scores_array.filter(item => item === 0).length;
+    //     setCorrect(correct_score);
+    //     console.log(correct);
+    //     // user won
+    //     if (correct_score === CORRECT_GUESSES) {
+    //       localStorage.setItem("rank_five_session_status", JSON.stringify(1));
+    //       console.log("Winner winner chicken dinner");
+    //       onOpen();
+    //     } 
+    //     else if (attempts === MAX_ATTEMPTS) {
+    //       localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
+    //       onOpen();
+    //       console.log("142 ran");
+    //     }
+    //     else {
+    //       console.log('Toaster ran now 161')
+    //         toast(
+    //           `You got ${correct_score} guess${
+    //             correct_score === 1 ? "" : "es"
+    //           } right!`,
+    //           {
+    //             position: "top-center",
+    //             duration: 3000,
+    //           },
+    //         );
+    //     }
+    //   }
     
-    }
+    // }
   }, [attempts]);
 
   return (
@@ -179,10 +184,10 @@ export const Main = () => {
       <Nav />
       <Toaster position="top-center" />
       <SolutionModal
-        // correctGuesses={score.filter((s) => s !== 1).length}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         correctGuesses={correct}
+        attempts={attempts}
 
       />
       <section className="w-3/5 mx-auto text-center my-8">
@@ -194,7 +199,7 @@ export const Main = () => {
         guesses={JSON.parse(
           localStorage.getItem("rank_five_last_guess") || "[]",
         )}
-        solution_map={snapshot.solution_map}
+        scores={scores}
       />
       <Drag />
     </div>

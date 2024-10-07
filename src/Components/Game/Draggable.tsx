@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { getListStyle, getItemStyle } from "./DraggableUtils";
 import { Button } from "@nextui-org/react";
 import {
@@ -80,6 +80,8 @@ export const Drag = () => {
       dispatch(incrementAttempts());
       localStorage.setItem("rank_five_session_attempts", JSON.stringify(attempts + 1));
 
+      // maybe move the toast notif here? TODO: deal with toast issue. 
+
       dispatch(mutateGuesses(guesses));
       localStorage.setItem("rank_five_last_guess", JSON.stringify(guesses));
     }
@@ -94,11 +96,9 @@ export const Drag = () => {
     dispatch(
       initializeGame({
         players: session.players,
-        solution_map: session.solution_map,
       }),
     );     
   }
-
 
   return (
     <>
@@ -197,13 +197,21 @@ export const Drag = () => {
         </div>
         <section className="w-full">
           <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-14">
-            <Button
-              onClick={attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) !== 0 ? startNewGame : HandleSubmitAttempt}
-              isDisabled={!(guesses.length === 5)}
-              className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
-            >
-              {attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) !== 0? "Start New Game" : "Submit"}
-            </Button>
+          <Button
+            onClick={
+              attempts === MAX_ATTEMPTS || 
+              Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0 
+                ? startNewGame 
+                : HandleSubmitAttempt
+            }
+            isDisabled={!(guesses.length === 5)}
+            className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
+          >
+            {attempts === MAX_ATTEMPTS || 
+            Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0
+              ? "Start New Game" 
+              : "Submit"}
+        </Button>
           </div>
         </section>
       </div>
