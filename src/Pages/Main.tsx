@@ -13,6 +13,7 @@ import {
   resetGameState,
 } from "../Store/Snapshot/snapshotSlice";
 import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
+import { fetchSession, initializeNewSession } from "../Api/Lib/Session";
 
 export const Main = () => {
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
@@ -37,17 +38,10 @@ export const Main = () => {
   };
 
   useEffect(() => {
-    const fetchSession = async (
-      user_id: string | null,
-      session_id: string | null,
-    ) => {
-      console.log(
-        `http://localhost:8080/session/retrieve/${user_id}/${session_id}`,
-      );
-      const response = await axios.get(
-        `http://localhost:8080/session/retrieve/${user_id}/${session_id}`,
-      );
-      const session = response.data;
+
+    const retrieveSession = async (user_id: string | null, session_id: string | null) => {
+
+      const session = await fetchSession(user_id, session_id);
       dispatch(
         initializeGame({
           players: session.players,
@@ -77,29 +71,26 @@ export const Main = () => {
           localStorage.getItem("rank_five_session_status") &&
           Number(localStorage.getItem("rank_five_session_status")) !== 0
         ) {
-          const endpoint = "http://localhost:8080/session/create";
 
-          const response = await axios.post(endpoint, {
-            user_id: localStorage.getItem("rank_five_user_id"),
-          });
-
+          const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+          
           dispatch(resetGameState());
 
           dispatch(
             initializeGame({
-              players: response.data.players,
-              solution_map: response.data.solution_map,
+              players: session.players,
+              solution_map: session.solution_map,
             }),
           );
 
           localStorage.setItem(
             "rank_five_session_id",
-            response.data.session_id,
+            session.session_id,
           );
           localStorage.setItem("rank_five_session_status", JSON.stringify(0));
           localStorage.setItem("rank_five_session_attempts", JSON.stringify(0));
         } else {
-          await fetchSession(
+          await retrieveSession(
             localStorage.getItem("rank_five_user_id"),
             localStorage.getItem("rank_five_session_id"),
           );
