@@ -4,7 +4,6 @@ import { RootState } from "../../Store/store";
 import { useSelector } from "react-redux";
 import { Card } from "../Game/Card";
 import { PlayerDataInterface } from "../../Types/store";
-import { apiClient } from "../../Api/axiosClient";
 
 interface SolutionModalProps {
   correctGuesses?: number;
