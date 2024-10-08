@@ -10,23 +10,20 @@ interface PlayerDataInterface {
   __v: number;
 }
 
-interface SolutionMapInterface {
-  [key: string]: number;
-}
-
+// interface SolutionMapInterface {
+//   [key: string]: number;
+// }
 
 type AttemptsType = 0 | 1 | 2 | 3;
 
 interface SnapshotInterface {
   players: PlayerDataInterface[];
   guesses: PlayerDataInterface[];
-  solution_map: SolutionMapInterface;
   attempts: AttemptsType;
 }
 
 export type {
   PlayerDataInterface,
   SnapshotInterface,
-  SolutionMapInterface,
   AttemptsType,
 };

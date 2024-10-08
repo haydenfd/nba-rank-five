@@ -72,15 +72,17 @@ export const Drag = () => {
     }
   };
 
-  const HandleSubmitAttempt = async () => {
-    
-    // Increment attempts across store and local storage. 
-    // Do bounds checking here because useSelector is async. 
+  const handleSubmitAttempt = async () => {
+    // Increment attempts across store and local storage.
+    // Do bounds checking here because useSelector is async.
     if (attempts < MAX_ATTEMPTS) {
       dispatch(incrementAttempts());
-      localStorage.setItem("rank_five_session_attempts", JSON.stringify(attempts + 1));
+      localStorage.setItem(
+        "rank_five_session_attempts",
+        JSON.stringify(attempts + 1),
+      );
 
-      // maybe move the toast notif here? TODO: deal with toast issue. 
+      // maybe move the toast notif here? TODO: deal with toast issue.
 
       dispatch(mutateGuesses(guesses));
       localStorage.setItem("rank_five_last_guess", JSON.stringify(guesses));
@@ -88,7 +90,9 @@ export const Drag = () => {
   };
 
   const startNewGame = async () => {
-    const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+    const session = await initializeNewSession(
+      localStorage.getItem("rank_five_user_id"),
+    );
     resetGameLocalStorage(session.session_id);
     dispatch(resetGameState());
     setGuesses([]);
@@ -97,8 +101,8 @@ export const Drag = () => {
       initializeGame({
         players: session.players,
       }),
-    );     
-  }
+    );
+  };
 
   return (
     <>
@@ -197,21 +201,29 @@ export const Drag = () => {
         </div>
         <section className="w-full">
           <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-14">
-          <Button
-            onClick={
-              attempts === MAX_ATTEMPTS || 
-              Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0 
-                ? startNewGame 
-                : HandleSubmitAttempt
-            }
-            isDisabled={!(guesses.length === 5)}
-            className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
-          >
-            {attempts === MAX_ATTEMPTS || 
-            Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0
-              ? "Start New Game" 
-              : "Submit"}
-        </Button>
+            <Button
+              onClick={
+                attempts === MAX_ATTEMPTS ||
+                Number(
+                  JSON.parse(
+                    localStorage.getItem("rank_five_session_status") || "0",
+                  ),
+                ) !== 0
+                  ? startNewGame
+                  : handleSubmitAttempt
+              }
+              // isDisabled={!(guesses.length === 5)}
+              className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
+            >
+              {attempts === MAX_ATTEMPTS ||
+              Number(
+                JSON.parse(
+                  localStorage.getItem("rank_five_session_status") || "0",
+                ),
+              ) !== 0
+                ? "Start New Game"
+                : "Submit"}
+            </Button>
           </div>
         </section>
       </div>

@@ -6,4 +6,6 @@ interface GuessCrumbsInterface {
   isVisible?: boolean;
 }
 
-export { GuessCrumbsInterface };
+type SessionStatusType = -1 | 0 | 1;
+
+export { GuessCrumbsInterface, SessionStatusType };

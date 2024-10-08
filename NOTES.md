@@ -17,8 +17,8 @@
 - Session_id
 - Session_status
 - Attempts
-    - Fetch solution map
-    - Compute score using solution map and guesses
+  - Fetch solution map
+  - Compute score using solution map and guesses
 - Last guess snapshot
 
 - Only update sessions after the session is over. Until then, keep it in local storage.
@@ -33,8 +33,6 @@
 - Attempts Distribution(when winning)
 - Average attempts / game
 
-
-
 ## Anti-pattern
 
-Redux slice reducers are meant to be pure functions. Need to get rid of all local storage implementations inside these functions. 
+Redux slice reducers are meant to be pure functions. Need to get rid of all local storage implementations inside these functions.

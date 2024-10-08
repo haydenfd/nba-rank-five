@@ -11,23 +11,27 @@ import {
   initializeGame,
   resetGameState,
 } from "../Store/Snapshot/snapshotSlice";
-import { MAX_ATTEMPTS, CORRECT_GUESSES } from "../Utils/globals";
-import { evaluateAttempt, fetchSession, initializeNewSession } from "../Api/Lib/Session";
+import { MAX_ATTEMPTS } from "../Utils/globals";
+import {
+  evaluateAttempt,
+  fetchSession,
+  initializeNewSession,
+} from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
-import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
-export const Main = () => {
+import {
+  resetGameLocalStorage,
+  initializeNewUserLocalStorage,
+} from "../Utils/game";
 
+export const Main = () => {
+  const dispatch = useDispatch();
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
   const snapshot = useSelector((state: RootState) => state.snapshot);
   const [scores, setScores] = useState<number[]>([]);
-  const dispatch = useDispatch();
-  const [correct, setCorrect] = useState<number>(0);
-  
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const initializeUser = async () => {
-    
     const user = await createNewUser();
 
     const newUserId = user.user_id;
@@ -42,15 +46,15 @@ export const Main = () => {
   };
 
   useEffect(() => {
-
     // (1) New user. Create new user and session
-    // (2) Old user, session over. Check local storage first to see session status. If status inactive, start new session. 
-    // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session. 
+    // (2) Old user, session over. Check local storage first to see session status. If status inactive, start new session.
+    // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session.
 
-
-    // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session. 
-    const retrieveSession = async (user_id: string | null, session_id: string | null) => {
-
+    // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session.
+    const retrieveSession = async (
+      user_id: string | null,
+      session_id: string | null,
+    ) => {
       const session = await fetchSession(user_id, session_id);
       dispatch(
         initializeGame({
@@ -66,80 +70,89 @@ export const Main = () => {
         newSessionId,
         players,
       };
-    }
+    };
 
     // main setup client func. Uses above internal funcs
     const setupClient = async () => {
-  
       const userIdLocalStorage = localStorage.getItem("rank_five_user_id");
-  
+
       if (!userIdLocalStorage) {
-        
         // initialize new user
-        const {newUserId, newSessionId, players} = await createNewUser();
+        const { newUserId, newSessionId, players } = await createNewUser();
         initializeNewUserLocalStorage(newUserId, newSessionId);
         dispatch(
           initializeGame({
             players: players,
           }),
-        );    
-      }
-  
-      else {
-  
+        );
+      } else {
         console.log("92");
-        // check if session is active or expired. 
-        const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
+        // check if session is active or expired.
+        const sessionStatusLocalStorage = localStorage.getItem(
+          "rank_five_session_status",
+        );
 
         if (sessionStatusLocalStorage) {
           console.log("97");
 
           const session_status = Number(JSON.parse(sessionStatusLocalStorage));
-  
+
           // active session
           if (session_status === 0) {
             console.log("103");
 
             //TODO: Check. May need to do a dispatch to update last guess, attempts, status
-            await retrieveSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id")); 
+            await retrieveSession(
+              localStorage.getItem("rank_five_user_id"),
+              localStorage.getItem("rank_five_session_id"),
+            );
           }
 
           // inactive session. Either user lost or won
-  
           else {
             console.log("112");
 
-            const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+            const session = await initializeNewSession(
+              localStorage.getItem("rank_five_user_id"),
+            );
             resetGameLocalStorage(session.session_id);
             dispatch(resetGameState());
-  
+
             dispatch(
               initializeGame({
                 players: session.players,
               }),
-            );            
+            );
           }
         }
       }
-
-    }
+    };
 
     setupClient();
   }, []);
 
   useEffect(() => {
-    // Problem - this use effect runs on refreshing website. Right after game is done. 
-      if (attempts > 0) {
-        const foo = async () => {
-          const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
-          const result = await evaluateAttempt(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"), guessesArray, attempts);
-          console.log(result);
-          setScores(result?.scores);
-        }
-  
-        foo();
-      }
-      
+    // Problem - this use effect runs on refreshing website. Right after game is done.
+    if (attempts > 0) {
+      const foo = async () => {
+        const guessesArray = JSON.parse(
+          localStorage.getItem("rank_five_last_guess") || "[]",
+        );
+        const result = await evaluateAttempt(
+          localStorage.getItem("rank_five_user_id"),
+          localStorage.getItem("rank_five_session_id"),
+          guessesArray,
+          attempts,
+        );
+        console.log(result);
+        setScores(result?.scores);
+
+        localStorage.setItem("rank_five_session_status", JSON.stringify(result?.session_status))
+      };
+
+      foo();
+    }
+
     // if (attempts > 0 && localStorage.getItem("rank_five_session_status") && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) === 0) {
     //   console.log('Check condition in 138');
     //   const guessesLocalStorage = localStorage.getItem("rank_five_last_guess");
@@ -156,7 +169,7 @@ export const Main = () => {
     //       localStorage.setItem("rank_five_session_status", JSON.stringify(1));
     //       console.log("Winner winner chicken dinner");
     //       onOpen();
-    //     } 
+    //     }
     //     else if (attempts === MAX_ATTEMPTS) {
     //       localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
     //       onOpen();
@@ -175,7 +188,7 @@ export const Main = () => {
     //         );
     //     }
     //   }
-    
+
     // }
   }, [attempts]);
 
@@ -186,9 +199,8 @@ export const Main = () => {
       <SolutionModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        correctGuesses={correct}
+        correctGuesses={5}
         attempts={attempts}
-
       />
       <section className="w-3/5 mx-auto text-center my-8">
         <h2 className="font-bold text-white text-3xl">

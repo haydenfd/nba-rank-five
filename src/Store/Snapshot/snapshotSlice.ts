@@ -8,7 +8,6 @@ import {
 const initialSnapshotState: SnapshotInterface = {
   players: [],
   guesses: [],
-  solution_map: {},
   attempts: localStorage.getItem("rank_five_session_attempts")
     ? (Number(
         localStorage.getItem("rank_five_session_attempts"),
@@ -29,7 +28,6 @@ const snapshotSlice = createSlice({
       state.attempts = 0;
       state.players = [];
       state.guesses = [];
-      state.solution_map = {};
     },
 
     initializeGame: (state, action: PayloadAction<InitializeGamePayload>) => {

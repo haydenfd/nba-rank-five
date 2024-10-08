@@ -4,7 +4,7 @@ import { PlayerDataInterface } from "../../Types/store";
 
 interface GuessCrumbsProps {
   guesses: PlayerDataInterface[];
-  scores: Number[];
+  scores: number[];
   isVisible?: boolean;
 }
 
@@ -17,7 +17,7 @@ export const GuessCrumbs: React.FC<GuessCrumbsProps> = ({
 
   useEffect(() => {
     setScores(scores);
-    console.log("crumbs useeffect")
+    // console.log("crumbs useeffect");
   }, [guesses, scores]);
 
   return (
