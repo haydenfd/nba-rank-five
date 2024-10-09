@@ -26,7 +26,6 @@ import {
 export const Main = () => {
   const dispatch = useDispatch();
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
-  const snapshot = useSelector((state: RootState) => state.snapshot);
   const [scores, setScores] = useState<number[]>([]);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -129,7 +128,7 @@ export const Main = () => {
     };
 
     setupClient();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
@@ -144,6 +143,7 @@ export const Main = () => {
           guessesArray,
           attempts,
         );
+        console.log(`New session status: ${result?.session_status}`);
         console.log(result);
         setScores(result?.scores);
 

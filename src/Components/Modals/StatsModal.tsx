@@ -89,24 +89,24 @@ export function StatsModal() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1 text-3xl">
-                Statistics
+                Your Stats
               </ModalHeader>
               <ModalBody>
                 <div className="flex flex-wrap justify-around gap-8 my-4">
-                  <div className="h-32 p-2 bg-gray-200 flex justify-center items-center sm:w-2/3 md:w-[40%] rounded-xl">
+                  <div className="h-28 p-2 bg-gray-700 text-white  flex justify-center items-center sm:w-2/3 md:w-[40%] rounded-xl">
                     <StatsBox value={String(stats.games_played)} context="Games Played" />
                   </div>
-                  <div className="h-32 p-2 bg-gray-200 flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
+                  <div className="h-28 p-2 bg-gray-700 text-white  flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
                     <StatsBox value={`${(100 * (stats.wins / stats.games_played)).toFixed(1)}%`} context="Win Percentage" />
                   </div>
-                  <div className="h-32 p-2 bg-gray-200 flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
+                  <div className="h-28 p-2 bg-gray-700 text-white  flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
                     <StatsBox value={`${stats.current_streak}`} context="Current Streak" />
                   </div>
-                  <div className="h-32 p-2 bg-gray-200 flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
+                  <div className="h-28  bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
                     <StatsBox value={`${stats.longest_streak}`} context="Longest Streak" />
                   </div>
-                  <div className="h-32 bg-gray-200 flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
-                    <StatsBox value={`${avgAttempts.toFixed(1)}`} context="Avg. Attempts Per Win" />
+                  <div className="h-28 p-2 bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
+                    <StatsBox value={`${avgAttempts.toFixed(2)}`} context="Avg. Attempts Per Win" />
                   </div>
                 </div>
               </ModalBody>
