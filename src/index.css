@@ -5,6 +5,16 @@
 @layer components {
 }
 
+@font-face {
+  font-family: "Geist";
+  src:
+    url("./Fonts/GeistVF.woff2") format("woff2"),
+    url("./Fonts/GeistVF.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+
 *::after,
 *::before {
   box-sizing: border-box;

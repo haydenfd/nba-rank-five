@@ -52,7 +52,8 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
                         <Card
                           id={player.PLAYER_ID}
                           name={player.PLAYER_NAME}
-                          ppg={String(player.PPG)}
+                          ppg=""
+                          // ppg={String(player.PPG)}
                         />
                       </>
                     ),

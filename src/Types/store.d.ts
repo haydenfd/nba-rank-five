@@ -2,11 +2,11 @@ interface PlayerDataInterface {
   _id: string;
   PLAYER_NAME: string;
   PLAYER_ID: string;
-  FROM_YEAR: number;
-  PPG: number;
-  GP: number;
-  EXP: number;
-  TO_YEAR: number;
+  FROM_YEAR?: number;
+  PPG?: number;
+  GP?: number;
+  EXP?: number;
+  TO_YEAR?: number;
   __v: number;
 }
 

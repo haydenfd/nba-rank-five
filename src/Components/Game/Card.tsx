@@ -21,7 +21,7 @@ export const Card = ({
     <div className="w-full flex flex-row space-x-4 items-center text-center text-black">
       <img src={generatePlayerImg(id)} width={80} height={80} />
       <h3 className="text-xl font-medium">{name}</h3>
-      <h2>{ppg}</h2>
+      {/* <h2>{ppg}</h2> */}
     </div>
   );
 };
