@@ -10,7 +10,7 @@ export const Nav = () => {
       </div>
       <div className="flex-1 flex items-center justify-center flex-shrink">
         <h1 className="font-semibold text-4xl underline underline-offset-4">
-          NBA Rank 5
+          NBA Rank 6 
         </h1>
       </div>
       <div className="w-[15%] py-2 flex items-center justify-center flex-shrink">

@@ -35,6 +35,14 @@ const computedWeightedAvg = (arr: [number, number, number], wins: number): numbe
   return (1 * arr[0] + 2 * arr[1] + 3 * arr[2]) / wins;
 };
 
+const computeWinPercentage = (wins: number, games_played: number) => {
+
+  if (games_played === 0) return 0.0;
+  else {
+    return (100 * (wins / games_played)).toFixed(1)
+  }
+}
+
 export function StatsModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [stats, setStats] = useState<StatsModalState>(initialState);
@@ -97,7 +105,7 @@ export function StatsModal() {
                     <StatsBox value={String(stats.games_played)} context="Games Played" />
                   </div>
                   <div className="h-28 p-2 bg-gray-700 text-white  flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
-                    <StatsBox value={`${(100 * (stats.wins / stats.games_played)).toFixed(1)}%`} context="Win Percentage" />
+                    <StatsBox value={`${computeWinPercentage(stats.wins, stats.games_played)}%`} context="Win Percentage" />
                   </div>
                   <div className="h-28 p-2 bg-gray-700 text-white  flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
                     <StatsBox value={`${stats.current_streak}`} context="Current Streak" />
