@@ -11,7 +11,7 @@ interface GuessCrumbsProps {
 export const GuessCrumbs: React.FC<GuessCrumbsProps> = ({
   guesses,
   scores,
-  isVisible = true,
+  isVisible = false,
 }) => {
   const [_scores, setScores] = useState<Number[]>([]);
 
@@ -24,7 +24,7 @@ export const GuessCrumbs: React.FC<GuessCrumbsProps> = ({
     <div
       className={`w-full mx-auto flex justify-center ${isVisible ? "visible" : "invisible"}`}
     >
-      <Breadcrumbs className="bg-white rounded mx-auto">
+      <Breadcrumbs className="bg-white rounded mx-auto ">
         {guesses &&
           guesses.map((item: PlayerDataInterface, idx: number) => (
             <BreadcrumbItem

@@ -4,10 +4,12 @@ export const Card = ({
   id,
   name,
   ppg = "",
+  color="black"
 }: {
   id: string;
   name: string;
   ppg: string;
+  color?: string;
 }) => {
   const generatePlayerImg = (id: string) => {
     // let [first, ...second] = name.split(" ")
@@ -18,7 +20,7 @@ export const Card = ({
     return `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${id}.png`;
   };
   return (
-    <div className="w-full flex flex-row space-x-4 items-center text-center text-black">
+    <div className={`w-full flex flex-row space-x-4 items-center text-center text-${color}`}>
       <img src={generatePlayerImg(id)} width={80} height={80} alt={name}/>
       <h3 className="text-xl font-medium">{name}</h3>
       {/* <h2>{ppg}</h2> */}

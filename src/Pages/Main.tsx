@@ -109,7 +109,6 @@ export const Main = () => {
 
           // inactive session. Either user lost or won
           else {
-            console.log("112");
 
             const session = await initializeNewSession(
               localStorage.getItem("rank_five_user_id"),
@@ -147,49 +146,28 @@ export const Main = () => {
         console.log(result);
         setScores(result?.scores);
 
+        if (result?.session_status === 0) {
+          toast(
+            `You got ${result?.scores.filter((s:number) => s !== 1).length} guess${
+              result?.scores.filter((s:number) => s !== 1).length === 1 ? "" : "es"
+            } right!`,
+            {
+              position: "top-center",
+              duration: 3000,
+            },
+          );
+        }
+
+        else {
+          onOpen();
+        }
+
         localStorage.setItem("rank_five_session_status", JSON.stringify(result?.session_status))
       };
 
       foo();
     }
 
-    // if (attempts > 0 && localStorage.getItem("rank_five_session_status") && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "")) === 0) {
-    //   console.log('Check condition in 138');
-    //   const guessesLocalStorage = localStorage.getItem("rank_five_last_guess");
-    //   console.log(JSON.parse(guessesLocalStorage || ""));
-
-    //   if (guessesLocalStorage) {
-    //     console.log("141");
-    //     const scores_array = generateScoresArray(JSON.parse(guessesLocalStorage), snapshot.solution_map);
-    //     const correct_score = scores_array.filter(item => item === 0).length;
-    //     setCorrect(correct_score);
-    //     console.log(correct);
-    //     // user won
-    //     if (correct_score === CORRECT_GUESSES) {
-    //       localStorage.setItem("rank_five_session_status", JSON.stringify(1));
-    //       console.log("Winner winner chicken dinner");
-    //       onOpen();
-    //     }
-    //     else if (attempts === MAX_ATTEMPTS) {
-    //       localStorage.setItem("rank_five_session_status", JSON.stringify(-1));
-    //       onOpen();
-    //       console.log("142 ran");
-    //     }
-    //     else {
-    //       console.log('Toaster ran now 161')
-    //         toast(
-    //           `You got ${correct_score} guess${
-    //             correct_score === 1 ? "" : "es"
-    //           } right!`,
-    //           {
-    //             position: "top-center",
-    //             duration: 3000,
-    //           },
-    //         );
-    //     }
-    //   }
-
-    // }
   }, [attempts]);
 
   return (
@@ -199,7 +177,7 @@ export const Main = () => {
       <SolutionModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        correctGuesses={5}
+        scores={scores}
         attempts={attempts}
       />
       <section className="w-3/5 mx-auto text-center my-8">
@@ -212,6 +190,7 @@ export const Main = () => {
           localStorage.getItem("rank_five_last_guess") || "[]",
         )}
         scores={scores}
+        isVisible={Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "10")) === 0}
       />
       <Drag />
     </div>
