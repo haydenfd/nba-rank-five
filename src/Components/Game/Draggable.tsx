@@ -212,7 +212,7 @@ export const Drag = () => {
                   ? startNewGame
                   : handleSubmitAttempt
               }
-              // isDisabled={!(guesses.length === 5)}
+              isDisabled={!(guesses.length === 5)}
               className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
             >
               {attempts === MAX_ATTEMPTS ||

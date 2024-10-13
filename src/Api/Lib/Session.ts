@@ -24,6 +24,7 @@ const initializeNewSession = async (user_id: string | null) => {
       user_id: user_id,
     });
 
+    console.log('Session')
     const session = response.data;
     return session;
   } catch (error) {

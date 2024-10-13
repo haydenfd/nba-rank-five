@@ -131,7 +131,13 @@ export const Main = () => {
 
   useEffect(() => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
-    if (attempts > 0) {
+    if (attempts > 0 && Number(JSON.parse(
+      localStorage.getItem("rank_five_session_status") || "0",
+    )) === 0) {
+      console.log(JSON.parse(
+        localStorage.getItem("rank_five_session_status") || "[]",
+      ));
+      console.log('is status');
       const foo = async () => {
         const guessesArray = JSON.parse(
           localStorage.getItem("rank_five_last_guess") || "[]",
