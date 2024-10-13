@@ -8,7 +8,6 @@ export const GuessCrumbs: React.FC<GuessCrumbsPropsInterface> = ({ guesses, scor
 
   useEffect(() => {
     setScores(scores);
-    console.log(isVisible);
   }, [guesses, scores]);
 
   return (

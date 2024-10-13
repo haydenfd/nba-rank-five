@@ -77,7 +77,6 @@ export const Main: React.FC = () => {
         const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
 
         if (sessionStatusLocalStorage) {
-          console.log("97");
 
           const session_status = Number(JSON.parse(sessionStatusLocalStorage));
 
@@ -112,7 +111,7 @@ export const Main: React.FC = () => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
     if (attempts > 0 && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) === 0) {
       console.log(JSON.parse(localStorage.getItem("rank_five_session_status") || "[]"));
-      console.log("is status");
+      
       const foo = async () => {
         const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
         const result = await evaluateAttempt(

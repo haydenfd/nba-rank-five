@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { getItemStyle, getListStyle } from "../../Utils/drag";
 import { Button } from "@nextui-org/react";
 import { PlayerDataInterface } from "../../Types/store";
-import { DropResult, DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DropResult, DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./Card";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import { mutateGuesses, incrementAttempts, initializeGame, resetGameState } from "../../Store/snapshotSlice";
 import { initializeNewSession } from "../../Api/Lib/Session";
 import { resetGameLocalStorage } from "../../Utils/game";
-import { MAX_ATTEMPTS } from "../../Utils/globals";
+import { CORRECT_GUESSES, MAX_ATTEMPTS } from "../../Utils/globals";
 
 export const Drag: React.FC = () => {
   const snap_players = useSelector((state: RootState) => state.snapshot.players);
@@ -159,7 +159,7 @@ export const Drag: React.FC = () => {
                   ? startNewGame
                   : handleSubmitAttempt
               }
-              isDisabled={!(guesses.length === 5)}
+              isDisabled={!(guesses.length === CORRECT_GUESSES)}
               className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
             >
               {attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0

@@ -1,4 +1,4 @@
-import { DroppableStateSnapshot } from "react-beautiful-dnd";
+import type { DroppableStateSnapshot } from "@hello-pangea/dnd";
 
 const grid = 8;
 const itemHeight = 90;
