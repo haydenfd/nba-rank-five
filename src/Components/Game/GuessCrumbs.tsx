@@ -8,10 +8,11 @@ export const GuessCrumbs: React.FC<GuessCrumbsPropsInterface> = ({ guesses, scor
 
   useEffect(() => {
     setScores(scores);
+    console.log(isVisible);
   }, [guesses, scores]);
 
   return (
-    <Breadcrumbs className={`max-w-[90%] mx-auto flex justify-center ${isVisible ? "visible" : "invisible"} bg-white p-2 rounded-xl`}>
+    <Breadcrumbs className={`max-w-[90%] mx-auto flex justify-center p-2 ${isVisible ? "visible" : "invisible"} bg-white rounded-xl`}>
       {guesses &&
         guesses.map((item: PlayerDataInterface, idx: number) => (
           <BreadcrumbItem

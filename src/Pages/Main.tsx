@@ -149,7 +149,7 @@ export const Main = () => {
   return (
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
-      <Toaster position="top-center" />
+      <Toaster position="top-center" duration={1750}/>
       <SolutionModal isOpen={isOpen} onOpenChange={onOpenChange} scores={scores} />
       <section className="w-3/5 mx-auto text-center my-8">
         <h2 className="font-bold text-white text-2xl">ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}</h2>
@@ -157,7 +157,7 @@ export const Main = () => {
       <GuessCrumbs
         guesses={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]")}
         scores={scores}
-        isVisible={Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "10")) === 0}
+        isVisible={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]").length > 0}
       />
       <Drag />
     </div>

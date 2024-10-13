@@ -90,7 +90,7 @@ export const Drag = () => {
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="w-[40%] flex-nowrap">
-              <div className="text-3xl font-bold text-white w-full text-center underline mb-4">PLAYERS</div>
+              <div className="text-2xl font-bold text-white w-full text-center underline mb-4">PLAYERS</div>
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps}>
@@ -121,7 +121,7 @@ export const Drag = () => {
             </div>
 
             <div className="w-[40%] flex-nowrap">
-              <div className="text-3xl font-bold text-white w-full text-center underline mb-4">GUESSES</div>
+              <div className="text-2xl font-bold text-white w-full text-center underline mb-4">GUESSES</div>
               <Droppable droppableId="droppable2">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps} className="flex-1">
