@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getListStyle, getItemStyle } from "./DraggableUtils";
+import { getItemStyle, getListStyle } from "../../Utils/drag";
 import { Button } from "@nextui-org/react";
 import { initializeGame, resetGameState } from "../../Store/Snapshot/snapshotSlice";
 import { PlayerDataInterface } from "../../Types/store";

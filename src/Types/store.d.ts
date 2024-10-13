@@ -10,9 +10,6 @@ interface PlayerDataInterface {
   __v: number;
 }
 
-// interface SolutionMapInterface {
-//   [key: string]: number;
-// }
 
 type AttemptsType = 0 | 1 | 2 | 3;
 

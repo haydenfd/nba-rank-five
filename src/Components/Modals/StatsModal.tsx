@@ -3,6 +3,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import { apiClient } from "../../Api/axiosClient";
 import { StatsBox } from "../Game/StatsBox";
 import { GenericModalsPropsInterface } from "../../Types/modals";
+import { computeWeightedAvg, computeWinPercentage } from "../../Utils/game";
 
 interface StatsModalState {
   games_played: number;
@@ -20,14 +21,6 @@ const initialState: StatsModalState = {
   attempts_distribution: [0, 0, 0],
 };
 
-const computeWeightedAvg = (arr: [number, number, number], wins: number): number => {
-  if (wins === 0) return 0;
-  return (1 * arr[0] + 2 * arr[1] + 3 * arr[2]) / wins;
-};
-
-const computeWinPercentage = (wins: number, games_played: number): string => {
-  return games_played === 0 ? "0.0" : (100 * (wins / games_played)).toFixed(1);
-};
 
 export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOpenChange }) => {
   const [stats, setStats] = useState<StatsModalState>(initialState);
@@ -75,7 +68,7 @@ export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOp
             <ModalHeader className="flex flex-col gap-1 text-3xl">Your Stats</ModalHeader>
             <ModalBody>
               <div className="flex flex-wrap justify-around gap-8 my-4">
-                <div className="h-28 p-2 bg-gray-700 text-white flex justify-center items-center sm:w-2/3 md:w-[40%] rounded-xl">
+                <div className="h-28 p-2 bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
                   <StatsBox value={String(stats.games_played)} context="Games Played" />
                 </div>
                 <div className="h-28 p-2 bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drag } from "../Components/Game/Draggable";
+import { Drag } from "../Components/Game/Drag";
 import { GuessCrumbs } from "../Components/Game/GuessCrumbs";
 import { Nav } from "../Components/Nav/Nav";
 import { useSelector, useDispatch } from "react-redux";
