@@ -8,4 +8,4 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>; // for root state
-export type AppDispatch = typeof store.dispatch; // for dispatchers; particularly useful for API calls(?)
+export type AppDispatch = typeof store.dispatch; // for dispatchers; particularly useful for API calls?
