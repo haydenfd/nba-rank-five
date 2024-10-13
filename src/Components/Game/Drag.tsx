@@ -7,7 +7,7 @@ import { Card } from "./Card";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
 import { mutateGuesses, incrementAttempts, initializeGame, resetGameState } from "../../Store/snapshotSlice";
-import { initializeNewSession } from "../../Api/Lib/Session";
+import { createSession } from "../../Api/Lib/Session";
 import { resetGameLocalStorage } from "../../Utils/game";
 import { CORRECT_GUESSES, MAX_ATTEMPTS } from "../../Utils/globals";
 
@@ -71,7 +71,7 @@ export const Drag: React.FC = () => {
   };
 
   const startNewGame = async () => {
-    const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+    const session = await createSession(localStorage.getItem("rank_five_user_id"));
     resetGameLocalStorage(session.session_id);
     dispatch(resetGameState());
     setGuesses([]);

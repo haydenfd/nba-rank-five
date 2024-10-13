@@ -9,7 +9,7 @@ import { SolutionModal } from "../Components/Modals/SolutionModal";
 import { useDisclosure } from "@nextui-org/react";
 import { initializeGame, resetGameState } from "../Store/snapshotSlice";
 import { MAX_ATTEMPTS } from "../Utils/globals";
-import { evaluateAttempt, fetchSession, initializeNewSession } from "../Api/Lib/Session";
+import { evaluateAttempt, fetchSession, createSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
 import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 
@@ -20,18 +20,19 @@ export const Main: React.FC = () => {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const initializeUser = async () => {
+  const handleInitializeUser = async () => {
     const user = await createNewUser();
 
-    const newUserId = user.user_id;
-    const newSessionId = user.session_id;
-    const players = user.players;
-
-    return {
-      newUserId,
-      newSessionId,
-      players,
-    };
+      const newUserId = user.user_id;
+      const newSessionId = user.session_id;
+      const players = user.players;
+  
+      return {
+        newUserId,
+        newSessionId,
+        players,
+      };
+    
   };
 
   useEffect(() => {
@@ -40,17 +41,19 @@ export const Main: React.FC = () => {
     // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session.
 
     // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session.
-    const retrieveSession = async (user_id: string | null, session_id: string | null) => {
-      const session = await fetchSession(user_id, session_id);
-      dispatch(
-        initializeGame({
-          players: session.players,
-        }),
-      );
+    const handleFetchSession = async (user_id: string | null, session_id: string | null) => {
+      if (user_id && session_id) {
+        const session = await fetchSession(user_id, session_id);
+        dispatch(
+          initializeGame({
+            players: session.players,
+          }),
+        );
+      }
     };
 
-    const createNewUser = async () => {
-      const { newUserId, newSessionId, players } = await initializeUser();
+    const handleCreateNewUser = async () => {
+      const { newUserId, newSessionId, players } = await handleInitializeUser();
       return {
         newUserId,
         newSessionId,
@@ -64,7 +67,7 @@ export const Main: React.FC = () => {
 
       if (!userIdLocalStorage) {
         // initialize new user
-        const { newUserId, newSessionId, players } = await createNewUser();
+        const { newUserId, newSessionId, players } = await handleCreateNewUser();
         initializeNewUserLocalStorage(newUserId, newSessionId);
         dispatch(
           initializeGame({
@@ -85,12 +88,12 @@ export const Main: React.FC = () => {
             console.log("103");
 
             //TODO: Check. May need to do a dispatch to update last guess, attempts, status
-            await retrieveSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"));
+            await handleFetchSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"));
           }
 
           // inactive session. Either user lost or won
           else {
-            const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
+            const session = await createSession(localStorage.getItem("rank_five_user_id"));
             resetGameLocalStorage(session.session_id);
             dispatch(resetGameState());
 
@@ -111,7 +114,7 @@ export const Main: React.FC = () => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
     if (attempts > 0 && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) === 0) {
       console.log(JSON.parse(localStorage.getItem("rank_five_session_status") || "[]"));
-      
+
       const foo = async () => {
         const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
         const result = await evaluateAttempt(

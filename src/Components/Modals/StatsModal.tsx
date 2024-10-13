@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
-import { apiClient } from "../../Api/axiosClient";
 import { StatsBox } from "./StatsBox";
 import { GenericModalsPropsInterface, StatsModalStateInterface } from "../../Types/modals";
 import { computeWeightedAvg, computeWinPercentage } from "../../Utils/game";
-
+import { fetchUserStats } from "../../Api/Lib/User";
 const initialState: StatsModalStateInterface = {
   games_played: 0,
   wins: 0,
@@ -18,26 +17,29 @@ export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOp
   const [avgAttempts, setAvgAttempts] = useState<number>(0);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const user_id = localStorage.getItem("rank_five_user_id");
-      if (!user_id) {
+
+    const handleFetchStats = async () => {
+
+      const userId = localStorage.getItem("rank_five_user_id");
+      if (!userId) {
         console.error("User ID is missing in localStorage");
         return;
       }
+      else {
+        const stats = await fetchUserStats(userId);
 
-      try {
-        const response = await apiClient.get(`/users/stats/${user_id}`);
-        const fetchedStats = response.data;
-        setStats(fetchedStats);
-
-        setAvgAttempts(computeWeightedAvg(fetchedStats.attempts_distribution, fetchedStats.wins));
-      } catch (error) {
-        console.error("Error fetching stats:", error);
+        if (stats) {
+          setStats(stats);
+          setAvgAttempts(computeWeightedAvg(stats.attempts_distribution, stats.wins));
+        } 
+        else {
+          console.error("Stats returned null");
+        }
       }
-    };
+    }
 
     if (isOpen) {
-      fetchStats();
+      handleFetchStats();
     }
   }, [isOpen]);
 

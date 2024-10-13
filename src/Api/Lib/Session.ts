@@ -1,32 +1,31 @@
 import { AttemptsType, PlayerDataInterface } from "../../Types/store";
 import { apiClient } from "../axiosClient";
+import { AxiosResponse } from "axios";
+import { FetchSessionResponseInterface, CreateNewSessionResponseInterface } from "../../Types/api";
 
-const fetchSession = async (user_id: string | null, session_id: string | null) => {
+const fetchSession = async (user_id: string, session_id: string):Promise<FetchSessionResponseInterface> => {
   try {
-    const response = await apiClient.get(`/session/retrieve/${user_id}/${session_id}`);
-
-    const session = response.data;
-    return session;
+    const response:AxiosResponse<FetchSessionResponseInterface> = await apiClient.get(`/session/retrieve/${user_id}/${session_id}`);
+    return response.data;
   } catch (error) {
-    console.error("Failed to fetch session data:", error);
     throw error;
   }
 };
 
-const initializeNewSession = async (user_id: string | null) => {
+const createSession = async (user_id: string | null):Promise<CreateNewSessionResponseInterface> => {
   try {
-    const response = await apiClient.post("/session/create/", {
+    const response:AxiosResponse<CreateNewSessionResponseInterface> = await apiClient.post("/session/create/", {
       user_id: user_id,
     });
 
-    console.log("Session");
-    const session = response.data;
-    return session;
+    return response.data;
+
   } catch (error) {
     throw error;
   }
 };
 
+/* This is very very messy. Fix */
 const evaluateAttempt = async (user_id: string | null, session_id: string | null, guesses: PlayerDataInterface[], attempts: AttemptsType) => {
   try {
     const response = await apiClient.put("/session/evaluate", {
@@ -43,4 +42,4 @@ const evaluateAttempt = async (user_id: string | null, session_id: string | null
   }
 };
 
-export { fetchSession, initializeNewSession, evaluateAttempt };
+export { fetchSession, createSession, evaluateAttempt };

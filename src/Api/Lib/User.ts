@@ -1,14 +1,24 @@
+import { CreateNewUserResponseInterface } from "../../Types/api";
+import { StatsModalStateInterface } from "../../Types/modals";
 import { apiClient } from "../axiosClient";
+import { AxiosResponse } from "axios";
 
-const createNewUser = async () => {
+const createNewUser = async ():Promise<CreateNewUserResponseInterface> => {
   try {
-    const response = await apiClient.post("/users/create", {});
-    console.log("user");
-    const newUser = response.data;
-    return newUser;
+    const response:AxiosResponse<CreateNewUserResponseInterface> = await apiClient.post("/users/create", {});
+    return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export { createNewUser };
+const fetchUserStats = async (userId: string | null):Promise<StatsModalStateInterface> => {
+  try {
+    const response: AxiosResponse<StatsModalStateInterface> = await apiClient.get(`/users/stats/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export { createNewUser, fetchUserStats };
