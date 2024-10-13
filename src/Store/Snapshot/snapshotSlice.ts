@@ -1,17 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  SnapshotInterface,
-  PlayerDataInterface,
-  AttemptsType,
-} from "../../Types/store";
+import { SnapshotInterface, PlayerDataInterface, AttemptsType } from "../../Types/store";
 
 const initialSnapshotState: SnapshotInterface = {
   players: [],
   guesses: [],
   attempts: localStorage.getItem("rank_five_session_attempts")
-    ? (Number(
-        localStorage.getItem("rank_five_session_attempts"),
-      ) as AttemptsType)
+    ? (Number(localStorage.getItem("rank_five_session_attempts")) as AttemptsType)
     : (0 as AttemptsType),
 };
 
@@ -24,7 +18,7 @@ const snapshotSlice = createSlice({
   initialState: initialSnapshotState,
 
   reducers: {
-    resetGameState: (state) => {
+    resetGameState: state => {
       state.attempts = 0;
       state.players = [];
       state.guesses = [];
@@ -34,7 +28,7 @@ const snapshotSlice = createSlice({
       const { players } = action.payload;
       state.players = players;
     },
-    incrementAttempts: (state) => {
+    incrementAttempts: state => {
       const curr_state = state.attempts + 1;
       state.attempts = curr_state as AttemptsType;
       console.log(curr_state);
@@ -47,9 +41,4 @@ const snapshotSlice = createSlice({
 
 export default snapshotSlice.reducer;
 
-export const {
-  initializeGame,
-  mutateGuesses,
-  incrementAttempts,
-  resetGameState,
-} = snapshotSlice.actions;
+export const { initializeGame, mutateGuesses, incrementAttempts, resetGameState } = snapshotSlice.actions;

@@ -1,11 +1,11 @@
-import { PlayerDataInterface, SolutionMapInterface } from "./store";
+import { PlayerDataInterface } from "./store";
 
-interface GuessCrumbsInterface {
-  solution_map: SolutionMapInterface;
+interface GuessCrumbsPropsInterface {
   guesses: PlayerDataInterface[];
+  scores: number[];
   isVisible?: boolean;
 }
 
 type SessionStatusType = -1 | 0 | 1;
 
-export { GuessCrumbsInterface, SessionStatusType };
+export { GuessCrumbsPropsInterface, SessionStatusType };

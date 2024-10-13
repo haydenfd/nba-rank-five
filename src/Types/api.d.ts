@@ -3,5 +3,4 @@ interface FetchSessionParams {
   session_id: string;
 }
 
-
 export { FetchSessionParams };

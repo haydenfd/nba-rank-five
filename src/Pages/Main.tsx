@@ -7,21 +7,11 @@ import { RootState } from "../Store/store";
 import { Toaster, toast } from "sonner";
 import { SolutionModal } from "../Components/Modals/SolutionModal";
 import { useDisclosure } from "@nextui-org/react";
-import {
-  initializeGame,
-  resetGameState,
-} from "../Store/Snapshot/snapshotSlice";
+import { initializeGame, resetGameState } from "../Store/Snapshot/snapshotSlice";
 import { MAX_ATTEMPTS } from "../Utils/globals";
-import {
-  evaluateAttempt,
-  fetchSession,
-  initializeNewSession,
-} from "../Api/Lib/Session";
+import { evaluateAttempt, fetchSession, initializeNewSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
-import {
-  resetGameLocalStorage,
-  initializeNewUserLocalStorage,
-} from "../Utils/game";
+import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -50,10 +40,7 @@ export const Main = () => {
     // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session.
 
     // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session.
-    const retrieveSession = async (
-      user_id: string | null,
-      session_id: string | null,
-    ) => {
+    const retrieveSession = async (user_id: string | null, session_id: string | null) => {
       const session = await fetchSession(user_id, session_id);
       dispatch(
         initializeGame({
@@ -87,9 +74,7 @@ export const Main = () => {
       } else {
         console.log("92");
         // check if session is active or expired.
-        const sessionStatusLocalStorage = localStorage.getItem(
-          "rank_five_session_status",
-        );
+        const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
 
         if (sessionStatusLocalStorage) {
           console.log("97");
@@ -101,18 +86,12 @@ export const Main = () => {
             console.log("103");
 
             //TODO: Check. May need to do a dispatch to update last guess, attempts, status
-            await retrieveSession(
-              localStorage.getItem("rank_five_user_id"),
-              localStorage.getItem("rank_five_session_id"),
-            );
+            await retrieveSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"));
           }
 
           // inactive session. Either user lost or won
           else {
-
-            const session = await initializeNewSession(
-              localStorage.getItem("rank_five_user_id"),
-            );
+            const session = await initializeNewSession(localStorage.getItem("rank_five_user_id"));
             resetGameLocalStorage(session.session_id);
             dispatch(resetGameState());
 
@@ -131,17 +110,11 @@ export const Main = () => {
 
   useEffect(() => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
-    if (attempts > 0 && Number(JSON.parse(
-      localStorage.getItem("rank_five_session_status") || "0",
-    )) === 0) {
-      console.log(JSON.parse(
-        localStorage.getItem("rank_five_session_status") || "[]",
-      ));
-      console.log('is status');
+    if (attempts > 0 && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) === 0) {
+      console.log(JSON.parse(localStorage.getItem("rank_five_session_status") || "[]"));
+      console.log("is status");
       const foo = async () => {
-        const guessesArray = JSON.parse(
-          localStorage.getItem("rank_five_last_guess") || "[]",
-        );
+        const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
         const result = await evaluateAttempt(
           localStorage.getItem("rank_five_user_id"),
           localStorage.getItem("rank_five_session_id"),
@@ -154,47 +127,35 @@ export const Main = () => {
 
         if (result?.session_status === 0) {
           toast(
-            `You got ${result?.scores.filter((s:number) => s !== 1).length} guess${
-              result?.scores.filter((s:number) => s !== 1).length === 1 ? "" : "es"
+            `You got ${result?.scores.filter((s: number) => s !== 1).length} guess${
+              result?.scores.filter((s: number) => s !== 1).length === 1 ? "" : "es"
             } right!`,
             {
               position: "top-center",
               duration: 3000,
             },
           );
-        }
-
-        else {
+        } else {
           onOpen();
         }
 
-        localStorage.setItem("rank_five_session_status", JSON.stringify(result?.session_status))
+        localStorage.setItem("rank_five_session_status", JSON.stringify(result?.session_status));
       };
 
       foo();
     }
-
   }, [attempts]);
 
   return (
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
       <Toaster position="top-center" />
-      <SolutionModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        scores={scores}
-        attempts={attempts}
-      />
+      <SolutionModal isOpen={isOpen} onOpenChange={onOpenChange} scores={scores} />
       <section className="w-3/5 mx-auto text-center my-8">
-        <h2 className="font-bold text-white text-3xl">
-          ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}
-        </h2>
+        <h2 className="font-bold text-white text-2xl">ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}</h2>
       </section>
       <GuessCrumbs
-        guesses={JSON.parse(
-          localStorage.getItem("rank_five_last_guess") || "[]",
-        )}
+        guesses={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]")}
         scores={scores}
         isVisible={Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "10")) === 0}
       />

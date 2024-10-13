@@ -1,44 +1,30 @@
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { PlayerDataInterface } from "../../Types/store";
+import { GuessCrumbsPropsInterface } from "../../Types/game";
 
-interface GuessCrumbsProps {
-  guesses: PlayerDataInterface[];
-  scores: number[];
-  isVisible?: boolean;
-}
-
-export const GuessCrumbs: React.FC<GuessCrumbsProps> = ({
-  guesses,
-  scores,
-  isVisible = false,
-}) => {
+export const GuessCrumbs: React.FC<GuessCrumbsPropsInterface> = ({ guesses, scores, isVisible = false }) => {
   const [_scores, setScores] = useState<Number[]>([]);
 
   useEffect(() => {
     setScores(scores);
-    // console.log("crumbs useeffect");
   }, [guesses, scores]);
 
   return (
-    <div
-      className={`w-full mx-auto flex justify-center ${isVisible ? "visible" : "invisible"}`}
-    >
-      <Breadcrumbs className="bg-white rounded mx-auto ">
-        {guesses &&
-          guesses.map((item: PlayerDataInterface, idx: number) => (
-            <BreadcrumbItem
-              key={idx}
-              classNames={{
-                item: `text-2xl ${_scores[idx] === 0 ? "text-green-400" : "text-red-400"}`,
-                separator: `text-2xl text-black font-bold`,
-              }}
-              disableAnimation={true}
-            >
-              {item.PLAYER_NAME}
-            </BreadcrumbItem>
-          ))}
-      </Breadcrumbs>
-    </div>
+    <Breadcrumbs className={`max-w-[90%] mx-auto flex justify-center ${isVisible ? "visible" : "invisible"} bg-white p-2 rounded-xl`}>
+      {guesses &&
+        guesses.map((item: PlayerDataInterface, idx: number) => (
+          <BreadcrumbItem
+            key={idx}
+            classNames={{
+              item: `text-xl ${_scores[idx] === 0 ? "text-green-400" : "text-red-400"}`,
+              separator: `text-xl text-black font-extrabold`,
+            }}
+            disableAnimation={true}
+          >
+            {item.PLAYER_NAME}
+          </BreadcrumbItem>
+        ))}
+    </Breadcrumbs>
   );
 };

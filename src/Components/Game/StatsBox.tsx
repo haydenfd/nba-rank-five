@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 interface StatsBoxProps {
   value: string;
@@ -12,9 +12,7 @@ export const StatsBox: React.FC<StatsBoxProps> = ({ value, context }) => {
       <div className="text-4xl font-bold">{value}</div>
 
       {/* Larger contextual text with a narrower width to force word wrapping */}
-      <div className="text-center text-xl font-medium mt-2 w-full break-words">
-        {context}
-      </div>
+      <div className="text-center text-xl font-medium mt-2 w-full break-words">{context}</div>
     </div>
   );
 };

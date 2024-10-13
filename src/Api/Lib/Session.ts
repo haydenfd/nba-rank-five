@@ -1,14 +1,9 @@
 import { AttemptsType, PlayerDataInterface } from "../../Types/store";
 import { apiClient } from "../axiosClient";
 
-const fetchSession = async (
-  user_id: string | null,
-  session_id: string | null,
-) => {
+const fetchSession = async (user_id: string | null, session_id: string | null) => {
   try {
-    const response = await apiClient.get(
-      `/session/retrieve/${user_id}/${session_id}`,
-    );
+    const response = await apiClient.get(`/session/retrieve/${user_id}/${session_id}`);
 
     const session = response.data;
     return session;
@@ -24,7 +19,7 @@ const initializeNewSession = async (user_id: string | null) => {
       user_id: user_id,
     });
 
-    console.log('Session')
+    console.log("Session");
     const session = response.data;
     return session;
   } catch (error) {
@@ -32,12 +27,7 @@ const initializeNewSession = async (user_id: string | null) => {
   }
 };
 
-const evaluateAttempt = async (
-  user_id: string | null,
-  session_id: string | null,
-  guesses: PlayerDataInterface[],
-  attempts: AttemptsType,
-) => {
+const evaluateAttempt = async (user_id: string | null, session_id: string | null, guesses: PlayerDataInterface[], attempts: AttemptsType) => {
   try {
     const response = await apiClient.put("/session/evaluate", {
       user_id: user_id,

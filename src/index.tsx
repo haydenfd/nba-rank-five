@@ -6,9 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./Store/store";
 import { Main } from "./Pages/Main";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
-);
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
 root.render(
   <NextUIProvider>

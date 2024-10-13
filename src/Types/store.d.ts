@@ -22,8 +22,4 @@ interface SnapshotInterface {
   attempts: AttemptsType;
 }
 
-export type {
-  PlayerDataInterface,
-  SnapshotInterface,
-  AttemptsType,
-};
+export type { PlayerDataInterface, SnapshotInterface, AttemptsType };
