@@ -1,6 +1,7 @@
 import React from "react";
+import { CardPropsInterface } from "../../Types/game";
 
-export const Card = ({ id, name, ppg = "", color = "black" }: { id: string; name: string; ppg: string; color?: string }) => {
+export const Card: React.FC<CardPropsInterface> = ({ id, name, ppg = "", color = "black" }) => {
   const generatePlayerImg = (id: string) => {
     // let [first, ...second] = name.split(" ")
     // const base = "https://www.basketball-reference.com/req/202106291/images/headshots/";

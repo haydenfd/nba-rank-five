@@ -1,11 +1,7 @@
 import React from "react";
+import { StatsBoxPropsInterface } from "../../Types/modals";
 
-interface StatsBoxProps {
-  value: string;
-  context: string;
-}
-
-export const StatsBox: React.FC<StatsBoxProps> = ({ value, context }) => {
+export const StatsBox: React.FC<StatsBoxPropsInterface> = ({ value, context }) => {
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
       {/* Adjusting the number size back down and keeping it bold */}

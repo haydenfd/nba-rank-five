@@ -10,7 +10,6 @@ interface PlayerDataInterface {
   __v: number;
 }
 
-
 type AttemptsType = 0 | 1 | 2 | 3;
 
 interface SnapshotInterface {

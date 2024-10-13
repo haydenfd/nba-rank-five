@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import snapshotReducer from "./Snapshot/snapshotSlice";
+import snapshotReducer from "./snapshotSlice";
 
 export const store = configureStore({
   reducer: {

@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import { apiClient } from "../../Api/axiosClient";
-import { StatsBox } from "../Game/StatsBox";
-import { GenericModalsPropsInterface } from "../../Types/modals";
+import { StatsBox } from "./StatsBox";
+import { GenericModalsPropsInterface, StatsModalStateInterface } from "../../Types/modals";
 import { computeWeightedAvg, computeWinPercentage } from "../../Utils/game";
 
-interface StatsModalState {
-  games_played: number;
-  wins: number;
-  longest_streak: number;
-  current_streak: number;
-  attempts_distribution: [number, number, number];
-}
-
-const initialState: StatsModalState = {
+const initialState: StatsModalStateInterface = {
   games_played: 0,
   wins: 0,
   longest_streak: 0,
@@ -21,9 +13,8 @@ const initialState: StatsModalState = {
   attempts_distribution: [0, 0, 0],
 };
 
-
 export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOpenChange }) => {
-  const [stats, setStats] = useState<StatsModalState>(initialState);
+  const [stats, setStats] = useState<StatsModalStateInterface>(initialState);
   const [avgAttempts, setAvgAttempts] = useState<number>(0);
 
   useEffect(() => {

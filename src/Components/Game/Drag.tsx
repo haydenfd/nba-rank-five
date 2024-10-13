@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { getItemStyle, getListStyle } from "../../Utils/drag";
 import { Button } from "@nextui-org/react";
-import { initializeGame, resetGameState } from "../../Store/Snapshot/snapshotSlice";
 import { PlayerDataInterface } from "../../Types/store";
 import { DropResult, DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Card } from "./Card";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store/store";
-import { mutateGuesses, incrementAttempts } from "../../Store/Snapshot/snapshotSlice";
+import { mutateGuesses, incrementAttempts, initializeGame, resetGameState } from "../../Store/snapshotSlice";
 import { initializeNewSession } from "../../Api/Lib/Session";
 import { resetGameLocalStorage } from "../../Utils/game";
 import { MAX_ATTEMPTS } from "../../Utils/globals";
 
-export const Drag = () => {
+export const Drag: React.FC = () => {
   const snap_players = useSelector((state: RootState) => state.snapshot.players);
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
 

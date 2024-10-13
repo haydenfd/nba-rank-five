@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SnapshotInterface, PlayerDataInterface, AttemptsType } from "../../Types/store";
+import { SnapshotInterface, PlayerDataInterface, AttemptsType } from "../Types/store";
 
 const initialSnapshotState: SnapshotInterface = {
   players: [],

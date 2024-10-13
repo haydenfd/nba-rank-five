@@ -1,7 +1,6 @@
 # NBA Rank 6
 
-Visit the game here: https://nba-rank-6.netlify.app
-Check out the backend here: 
+Visit the game here: https://nba-rank-6.netlify.app Check out the backend here:
 
 ## Stack
 

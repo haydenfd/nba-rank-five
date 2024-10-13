@@ -7,13 +7,13 @@ import { RootState } from "../Store/store";
 import { Toaster, toast } from "sonner";
 import { SolutionModal } from "../Components/Modals/SolutionModal";
 import { useDisclosure } from "@nextui-org/react";
-import { initializeGame, resetGameState } from "../Store/Snapshot/snapshotSlice";
+import { initializeGame, resetGameState } from "../Store/snapshotSlice";
 import { MAX_ATTEMPTS } from "../Utils/globals";
 import { evaluateAttempt, fetchSession, initializeNewSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
 import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 
-export const Main = () => {
+export const Main: React.FC = () => {
   const dispatch = useDispatch();
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
   const [scores, setScores] = useState<number[]>([]);
@@ -149,7 +149,7 @@ export const Main = () => {
   return (
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
-      <Toaster position="top-center" duration={1750}/>
+      <Toaster position="top-center" duration={1750} />
       <SolutionModal isOpen={isOpen} onOpenChange={onOpenChange} scores={scores} />
       <section className="w-3/5 mx-auto text-center my-8">
         <h2 className="font-bold text-white text-2xl">ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}</h2>

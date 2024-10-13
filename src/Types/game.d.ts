@@ -8,4 +8,15 @@ interface GuessCrumbsPropsInterface {
 
 type SessionStatusType = -1 | 0 | 1;
 
-export { GuessCrumbsPropsInterface, SessionStatusType };
+/* Begin - Game/Card.tsx types */
+
+interface CardPropsInterface {
+  id: string;
+  name: string;
+  ppg: string;
+  color?: string;
+}
+
+/* End - Game/Card.tsx types */
+
+export { GuessCrumbsPropsInterface, SessionStatusType, CardPropsInterface };

@@ -4,7 +4,7 @@ import { StatsModal } from "../Modals/StatsModal";
 import { useDisclosure, Button } from "@nextui-org/react";
 import { QuestionMarkCircledIcon, BarChartIcon } from "@radix-ui/react-icons";
 
-export const Nav = () => {
+export const Nav: React.FC = () => {
   // Using destructuring with aliases to avoid name conflicts
   const { isOpen: isGuideModalOpen, onOpen: openGuideModal, onOpenChange: onGuideModalChange } = useDisclosure();
 
