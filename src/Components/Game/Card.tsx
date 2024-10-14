@@ -14,7 +14,7 @@ export const Card: React.FC<CardPropsInterface> = ({ id, name, ppg = "", color =
     <div className={`w-full flex flex-row space-x-4 items-center text-center text-${color}`}>
       <img src={generatePlayerImg(id)} width={80} height={80} alt={name} />
       <h3 className="text-xl font-medium">{name}</h3>
-      {/* <h2>{ppg}</h2> */}
+      <h2 className="text-xl font-medium mr-0">{ppg}</h2>
     </div>
   );
 };

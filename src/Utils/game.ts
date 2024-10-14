@@ -3,6 +3,8 @@ const resetGameLocalStorage = (session_id: string) => {
   localStorage.setItem("rank_five_session_status", JSON.stringify(0));
   localStorage.setItem("rank_five_last_guess", JSON.stringify([]));
   localStorage.setItem("rank_five_session_attempts", JSON.stringify(0));
+  localStorage.removeItem("rank_five_session_solution");
+
 };
 
 const initializeNewUserLocalStorage = (user_id: string, session_id: string) => {

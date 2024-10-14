@@ -1,3 +1,5 @@
+import { PlayerDataInterface } from "./store";
+
 interface GenericModalsPropsInterface {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -5,6 +7,7 @@ interface GenericModalsPropsInterface {
 
 interface SolutionModalPropsInterface extends GenericModalsPropsInterface {
   scores: number[];
+  solution: PlayerDataInterface[];
 }
 
 interface StatsBoxPropsInterface {

@@ -21,4 +21,11 @@ interface CreateNewUserResponseInterface {
   players: PlayerDataInterface[];
 }
 
-export { FetchSessionResponseInterface, CreateNewUserResponseInterface, CreateNewSessionResponseInterface };
+interface EvaluateSessionAttemptInterface {
+  session_status: SessionStatusType;
+  attempts: AttemptsType;
+  scores: number[];
+  solution?: PlayerDataInterface[];
+}
+
+export { FetchSessionResponseInterface, CreateNewUserResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface};

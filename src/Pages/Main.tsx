@@ -12,29 +12,22 @@ import { MAX_ATTEMPTS } from "../Utils/globals";
 import { evaluateAttempt, fetchSession, createSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
 import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
+// import { apiClient } from "../Api/axiosClient";
 
 export const Main: React.FC = () => {
   const dispatch = useDispatch();
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
   const [scores, setScores] = useState<number[]>([]);
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen: isOpenSolutionModal, onOpen: onOpenSolutionModal, onOpenChange: onOpenSolutionModalChange } = useDisclosure();
 
-  const handleInitializeUser = async () => {
-    const user = await createNewUser();
-
-      const newUserId = user.user_id;
-      const newSessionId = user.session_id;
-      const players = user.players;
-  
-      return {
-        newUserId,
-        newSessionId,
-        players,
-      };
-    
-  };
-
+  // useEffect(() => {
+  //   const test = async () => {
+  //     const response = await apiClient.put("/session/evaluate", {});
+  //     console.log(response.data);
+  //   }
+  //   test();
+  // }, [])
   useEffect(() => {
     // (1) New user. Create new user and session
     // (2) Old user, session over. Check local storage first to see session status. If status inactive, start new session.
@@ -53,10 +46,10 @@ export const Main: React.FC = () => {
     };
 
     const handleCreateNewUser = async () => {
-      const { newUserId, newSessionId, players } = await handleInitializeUser();
+      const {user_id, session_id, players} = await createNewUser();
       return {
-        newUserId,
-        newSessionId,
+        user_id,
+        session_id,
         players,
       };
     };
@@ -67,8 +60,8 @@ export const Main: React.FC = () => {
 
       if (!userIdLocalStorage) {
         // initialize new user
-        const { newUserId, newSessionId, players } = await handleCreateNewUser();
-        initializeNewUserLocalStorage(newUserId, newSessionId);
+        const { user_id, session_id, players } = await handleCreateNewUser();
+        initializeNewUserLocalStorage(user_id, session_id);
         dispatch(
           initializeGame({
             players: players,
@@ -113,24 +106,22 @@ export const Main: React.FC = () => {
   useEffect(() => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
     if (attempts > 0 && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) === 0) {
-      console.log(JSON.parse(localStorage.getItem("rank_five_session_status") || "[]"));
 
-      const foo = async () => {
+      const handleAttempt = async () => {
         const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
-        const result = await evaluateAttempt(
+        const response_data = await evaluateAttempt(
           localStorage.getItem("rank_five_user_id"),
           localStorage.getItem("rank_five_session_id"),
           guessesArray,
           attempts,
         );
-        console.log(`New session status: ${result?.session_status}`);
-        console.log(result);
-        setScores(result?.scores);
+       
+        setScores(response_data.scores);
 
-        if (result?.session_status === 0) {
+        if (response_data.session_status === 0) {
           toast(
-            `You got ${result?.scores.filter((s: number) => s !== 1).length} guess${
-              result?.scores.filter((s: number) => s !== 1).length === 1 ? "" : "es"
+            `You got ${response_data.scores.filter((s: number) => s !== 1).length} guess${
+              response_data.scores.filter((s: number) => s !== 1).length === 1 ? "" : "es"
             } right!`,
             {
               position: "top-center",
@@ -138,13 +129,18 @@ export const Main: React.FC = () => {
             },
           );
         } else {
-          onOpen();
+          const sol = response_data.solution;
+
+          if (sol) {
+            localStorage.setItem("rank_five_session_solution", JSON.stringify(response_data.solution))
+            onOpenSolutionModal();
+          }
         }
 
-        localStorage.setItem("rank_five_session_status", JSON.stringify(result?.session_status));
+        localStorage.setItem("rank_five_session_status", JSON.stringify(response_data.session_status));
       };
 
-      foo();
+      handleAttempt();
     }
   }, [attempts]);
 
@@ -152,7 +148,7 @@ export const Main: React.FC = () => {
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
       <Toaster position="top-center" duration={1750} />
-      <SolutionModal isOpen={isOpen} onOpenChange={onOpenChange} scores={scores} />
+      <SolutionModal isOpen={isOpenSolutionModal} onOpenChange={onOpenSolutionModalChange} scores={scores} solution={JSON.parse(localStorage.getItem("rank_five_session_solution") || "[]")}/>
       <section className="w-3/5 mx-auto text-center my-8">
         <h2 className="font-bold text-white text-2xl">ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}</h2>
       </section>

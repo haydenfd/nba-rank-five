@@ -1,7 +1,7 @@
 import { AttemptsType, PlayerDataInterface } from "../../Types/store";
 import { apiClient } from "../axiosClient";
 import { AxiosResponse } from "axios";
-import { FetchSessionResponseInterface, CreateNewSessionResponseInterface } from "../../Types/api";
+import { FetchSessionResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface } from "../../Types/api";
 
 const fetchSession = async (user_id: string, session_id: string):Promise<FetchSessionResponseInterface> => {
   try {
@@ -25,18 +25,16 @@ const createSession = async (user_id: string | null):Promise<CreateNewSessionRes
   }
 };
 
-/* This is very very messy. Fix */
-const evaluateAttempt = async (user_id: string | null, session_id: string | null, guesses: PlayerDataInterface[], attempts: AttemptsType) => {
+const evaluateAttempt = async (user_id: string | null, session_id: string | null, guesses: PlayerDataInterface[], attempts: AttemptsType):Promise<EvaluateSessionAttemptInterface> => {
   try {
-    const response = await apiClient.put("/session/evaluate", {
+    const response:AxiosResponse<EvaluateSessionAttemptInterface> = await apiClient.put("/session/evaluate", {
       user_id: user_id,
       session_id: session_id,
       guesses: guesses,
       attempts: attempts,
     });
 
-    const scores_array = response.data;
-    return scores_array;
+    return response.data;
   } catch (error) {
     throw error;
   }

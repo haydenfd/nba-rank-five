@@ -108,7 +108,7 @@ export const Drag: React.FC = () => {
                             className={`${false ? "pointer-events-none" : "pointer-events-auto"}`}
                             style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                           >
-                            <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} ppg={String(player.PPG)} />
+                            <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} ppg="" />
                           </div>
                         )}
                       </Draggable>
@@ -139,7 +139,7 @@ export const Drag: React.FC = () => {
                             className={`${false ? "pointer-events-none" : "pointer-events-auto"}`}
                             style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                           >
-                            <Card id={guess.PLAYER_ID} name={guess.PLAYER_NAME} ppg={String(guess.PPG)} />
+                            <Card id={guess.PLAYER_ID} name={guess.PLAYER_NAME} ppg=""/>
                           </div>
                         )}
                       </Draggable>
