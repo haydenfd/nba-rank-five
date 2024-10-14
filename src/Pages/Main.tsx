@@ -46,7 +46,7 @@ export const Main: React.FC = () => {
     };
 
     const handleCreateNewUser = async () => {
-      const {user_id, session_id, players} = await createNewUser();
+      const { user_id, session_id, players } = await createNewUser();
       return {
         user_id,
         session_id,
@@ -73,7 +73,6 @@ export const Main: React.FC = () => {
         const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
 
         if (sessionStatusLocalStorage) {
-
           const session_status = Number(JSON.parse(sessionStatusLocalStorage));
 
           // active session
@@ -106,7 +105,6 @@ export const Main: React.FC = () => {
   useEffect(() => {
     // Problem - this use effect runs on refreshing website. Right after game is done.
     if (attempts > 0 && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) === 0) {
-
       const handleAttempt = async () => {
         const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
         const response_data = await evaluateAttempt(
@@ -115,7 +113,7 @@ export const Main: React.FC = () => {
           guessesArray,
           attempts,
         );
-       
+
         setScores(response_data.scores);
 
         if (response_data.session_status === 0) {
@@ -132,7 +130,7 @@ export const Main: React.FC = () => {
           const sol = response_data.solution;
 
           if (sol) {
-            localStorage.setItem("rank_five_session_solution", JSON.stringify(response_data.solution))
+            localStorage.setItem("rank_five_session_solution", JSON.stringify(response_data.solution));
             onOpenSolutionModal();
           }
         }
@@ -148,7 +146,12 @@ export const Main: React.FC = () => {
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
       <Toaster position="top-center" duration={1750} />
-      <SolutionModal isOpen={isOpenSolutionModal} onOpenChange={onOpenSolutionModalChange} scores={scores} solution={JSON.parse(localStorage.getItem("rank_five_session_solution") || "[]")}/>
+      <SolutionModal
+        isOpen={isOpenSolutionModal}
+        onOpenChange={onOpenSolutionModalChange}
+        scores={scores}
+        solution={JSON.parse(localStorage.getItem("rank_five_session_solution") || "[]")}
+      />
       <section className="w-3/5 mx-auto text-center my-8">
         <h2 className="font-bold text-white text-2xl">ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}</h2>
       </section>

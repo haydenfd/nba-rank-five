@@ -6,7 +6,6 @@ import { SolutionModalPropsInterface } from "../../Types/modals";
 import { CORRECT_GUESSES } from "../../Utils/globals";
 
 export const SolutionModal: React.FC<SolutionModalPropsInterface> = ({ scores, isOpen, onOpenChange, solution }) => {
-
   const [_solution, setSolution] = useState<PlayerDataInterface[]>([]);
 
   useEffect(() => {
@@ -14,7 +13,6 @@ export const SolutionModal: React.FC<SolutionModalPropsInterface> = ({ scores, i
       setSolution(solution);
     }
   }, [solution]);
-
 
   return (
     <>
@@ -39,20 +37,15 @@ export const SolutionModal: React.FC<SolutionModalPropsInterface> = ({ scores, i
               </ModalHeader>
               <ModalBody>
                 <div className="w-full flex flex-col gap-4 mb-4">
-                  <h2 className="text-xl font-medium text-center">You got {scores.filter((s: number) => s !== 1).length === CORRECT_GUESSES? "all" : scores.filter((s: number) => s !== 1).length} guess{
-                      scores.filter((s: number) => s !== 1).length === 1 ? "" : "es"
-                  } correct</h2>
+                  <h2 className="text-xl font-medium text-center">
+                    You got {scores.filter((s: number) => s !== 1).length === CORRECT_GUESSES ? "all" : scores.filter((s: number) => s !== 1).length}{" "}
+                    guess{scores.filter((s: number) => s !== 1).length === 1 ? "" : "es"} correct
+                  </h2>
                   <h1 className="text-2xl text-center font-semibold text-black">Solution</h1>
                   {_solution.map((player: PlayerDataInterface, index: number) => (
                     <Fragment key={index}>
                       <div className="border-2 border-black bg-gray-700 py-2 px-2 rounded-xl">
-                        <Card
-                          
-                          id={player.PLAYER_ID}
-                          name={player.PLAYER_NAME}
-                          color="white"
-                          ppg={String(player?.PPG)}
-                        />
+                        <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} color="white" ppg={String(player?.PPG)} />
                       </div>
                     </Fragment>
                   ))}

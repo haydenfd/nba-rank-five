@@ -28,4 +28,4 @@ interface EvaluateSessionAttemptInterface {
   solution?: PlayerDataInterface[];
 }
 
-export { FetchSessionResponseInterface, CreateNewUserResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface};
+export { FetchSessionResponseInterface, CreateNewUserResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface };

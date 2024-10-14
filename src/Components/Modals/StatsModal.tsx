@@ -17,26 +17,22 @@ export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOp
   const [avgAttempts, setAvgAttempts] = useState<number>(0);
 
   useEffect(() => {
-
     const handleFetchStats = async () => {
-
       const userId = localStorage.getItem("rank_five_user_id");
       if (!userId) {
         console.error("User ID is missing in localStorage");
         return;
-      }
-      else {
+      } else {
         const stats = await fetchUserStats(userId);
 
         if (stats) {
           setStats(stats);
           setAvgAttempts(computeWeightedAvg(stats.attempts_distribution, stats.wins));
-        } 
-        else {
+        } else {
           console.error("Stats returned null");
         }
       }
-    }
+    };
 
     if (isOpen) {
       handleFetchStats();
