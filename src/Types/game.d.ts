@@ -14,6 +14,7 @@ interface CardPropsInterface {
   id: string;
   name: string;
   ppg: string;
+  code?: string;
   color?: string;
 }
 

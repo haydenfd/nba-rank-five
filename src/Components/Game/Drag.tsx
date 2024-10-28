@@ -22,6 +22,7 @@ export const Drag: React.FC = () => {
   useEffect(() => {
     if (snap_players && snap_players.length > 0) {
       setPlayers(snap_players);
+      console.log(snap_players);
     }
   }, [snap_players]);
 
@@ -85,11 +86,11 @@ export const Drag: React.FC = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center space-y-10 mt-10">
+      <div className="w-full flex flex-col items-center space-y-10 mt-6">
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="w-[40%] flex-nowrap">
-              <div className="text-2xl font-bold text-white w-full text-center underline underline-offset-4 mb-4">PLAYERS</div>
+              <div className="text-2xl font-semibold  w-full text-center mb-6 py-1 bg-white text-slate-800">PLAYERS</div>
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps}>
@@ -108,7 +109,7 @@ export const Drag: React.FC = () => {
                             className={`${false ? "pointer-events-none" : "pointer-events-auto"}`}
                             style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                           >
-                            <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} ppg="" />
+                            <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} ppg="" code={player.CODE}/>
                           </div>
                         )}
                       </Draggable>
@@ -120,7 +121,7 @@ export const Drag: React.FC = () => {
             </div>
 
             <div className="w-[40%] flex-nowrap">
-              <div className="text-2xl font-bold text-white w-full text-center underline underline-offset-4 mb-4">GUESSES</div>
+              <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800">GUESSES</div>
               <Droppable droppableId="droppable2">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps} className="flex-1">
@@ -139,7 +140,7 @@ export const Drag: React.FC = () => {
                             className={`${false ? "pointer-events-none" : "pointer-events-auto"}`}
                             style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                           >
-                            <Card id={guess.PLAYER_ID} name={guess.PLAYER_NAME} ppg="" />
+                            <Card id={guess.PLAYER_ID} name={guess.PLAYER_NAME} ppg="" code={guess.CODE}/>
                           </div>
                         )}
                       </Draggable>

@@ -12,8 +12,36 @@ import { MAX_ATTEMPTS } from "../Utils/globals";
 import { evaluateAttempt, fetchSession, createSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
 import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
-// import { apiClient } from "../Api/axiosClient";
 
+
+interface CircularImageProps {
+  src: string;
+  alt: string;
+  size?: string;
+  fit?: 'contain' | 'cover' | 'scale-down';
+}
+
+export const CircularImage: React.FC<CircularImageProps> = ({
+  src,
+  alt,
+  size = 'w-24 h-24',
+  fit = 'contain'
+}) => {
+  return (
+    <div className={`${size} rounded-full overflow-hidden flex items-center justify-center bg-white ml-4`}>
+      <div className="w-full h-full flex items-center justify-center">
+        <img
+          src={src}
+          alt={alt}
+          className={`max-w-full max-h-full object-${fit}`}
+        />
+      </div>
+    </div>
+  );
+};
+
+
+export default CircularImage;
 export const Main: React.FC = () => {
   const dispatch = useDispatch();
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
@@ -152,10 +180,25 @@ export const Main: React.FC = () => {
         scores={scores}
         solution={JSON.parse(localStorage.getItem("rank_five_session_solution") || "[]")}
       />
-      <section className="w-3/5 mx-auto text-center my-8">
-        <h2 className="font-bold text-white text-2xl">ATTEMPTS LEFT: {MAX_ATTEMPTS - attempts}</h2>
+      <section className="w-3/5 mx-auto text-center my-4 ">
+        <h2 className="font-semibold text-white text-2xl">
+          Attempts left:{" "}
+          {/* <span
+            className={
+              attempts === 0
+                ? "text-green-500"
+                : attempts === 1
+                ? "text-orange-500"
+                : "text-red-500"
+            }
+          > */}
+            {MAX_ATTEMPTS - attempts}
+          {/* </span> */}
+          , Category: PPG
+        </h2>
       </section>
-      <GuessCrumbs
+
+    <GuessCrumbs
         guesses={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]")}
         scores={scores}
         isVisible={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]").length > 0}

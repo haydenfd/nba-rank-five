@@ -45,7 +45,7 @@ export const SolutionModal: React.FC<SolutionModalPropsInterface> = ({ scores, i
                   {_solution.map((player: PlayerDataInterface, index: number) => (
                     <Fragment key={index}>
                       <div className="border-2 border-black bg-gray-700 py-2 px-2 rounded-xl">
-                        <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} color="white" ppg={String(player?.PPG)} />
+                        <Card id={player.PLAYER_ID} name={player.PLAYER_NAME} color="white" ppg={String(player?.PPG)} code={player.CODE}/>
                       </div>
                     </Fragment>
                   ))}

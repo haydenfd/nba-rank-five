@@ -11,14 +11,14 @@ export const GuessCrumbs: React.FC<GuessCrumbsPropsInterface> = ({ guesses, scor
   }, [guesses, scores]);
 
   return (
-    <Breadcrumbs className={`max-w-[90%] mx-auto flex justify-center p-2 ${isVisible ? "visible" : "invisible"} bg-white rounded-xl`}>
+    <Breadcrumbs className={`max-w-[90%] mx-auto flex justify-center p-2 ${isVisible ? "bg-white" : "bg-transparent"}  rounded-xl`}>
       {guesses &&
         guesses.map((item: PlayerDataInterface, idx: number) => (
           <BreadcrumbItem
             key={idx}
             classNames={{
-              item: `text-xl ${_scores[idx] === 0 ? "text-green-400" : "text-red-400"}`,
-              separator: `text-xl text-black font-extrabold`,
+              item: `text-xl ${_scores[idx] === 0 ? "text-green-500" : "text-red-500"}`,
+              separator: `text-xl text-black font-extrabold scale-125`,
             }}
             disableAnimation={true}
           >

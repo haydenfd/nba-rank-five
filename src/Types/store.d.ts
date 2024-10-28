@@ -7,7 +7,17 @@ interface PlayerDataInterface {
   GP?: number;
   EXP?: number;
   TO_YEAR?: number;
-  __v: number;
+  ROSTERSTATUS?: number;
+  START_YEAR?: number;
+  END_YEAR?: number;
+  SEASONS_EXPOSED? : number;
+  SEASONS_PLAYED? : number;
+  GS?: number; 
+  APG?: number;
+  RPG?: number;
+  MPG?: number;
+  GAMES_PER_SEASON?: number;
+  CODE?: string;
 }
 
 type AttemptsType = 0 | 1 | 2 | 3;

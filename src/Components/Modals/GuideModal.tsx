@@ -20,7 +20,7 @@ export const GuideModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOp
           <>
             <ModalHeader className="flex flex-col gap-1">How to play</ModalHeader>
             <ModalBody>
-              <h3>This is your guide</h3>
+              <h3>This is how to play. You get three attempts etc etc</h3>
             </ModalBody>
           </>
         )}

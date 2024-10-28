@@ -13,6 +13,9 @@ module.exports = {
       fontFamily: {
         geist: ["Geist", "sans-serif"],
       },
+      objectPosition: {
+        'center-top': 'center top',
+      }
     },
   },
   darkMode: "class",
