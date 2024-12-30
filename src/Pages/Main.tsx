@@ -6,13 +6,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Store/store";
 import { Toaster, toast } from "sonner";
 import { SolutionModal } from "../Components/Modals/SolutionModal";
-import { useDisclosure } from "@nextui-org/react";
 import { initializeGame, resetGameState } from "../Store/snapshotSlice";
 import { MAX_ATTEMPTS } from "../Utils/globals";
 import { evaluateAttempt, fetchSession, createSession } from "../Api/Lib/Session";
 import { createNewUser } from "../Api/Lib/User";
 import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
-
+import { GuideModal } from "../Components/Modals/GuideModal";
+import { useDisclosure } from "@nextui-org/react";
 
 interface CircularImageProps {
   src: string;
@@ -46,20 +46,15 @@ export const Main: React.FC = () => {
   const dispatch = useDispatch();
   const attempts = useSelector((state: RootState) => state.snapshot.attempts);
   const [scores, setScores] = useState<number[]>([]);
-
+  const { isOpen: isGuideModalOpen, onOpen: openGuideModal, onOpenChange: onGuideModalChange } = useDisclosure();
   const { isOpen: isOpenSolutionModal, onOpen: onOpenSolutionModal, onOpenChange: onOpenSolutionModalChange } = useDisclosure();
 
-  // useEffect(() => {
-  //   const test = async () => {
-  //     const response = await apiClient.put("/session/evaluate", {});
-  //     console.log(response.data);
-  //   }
-  //   test();
-  // }, [])
+
   useEffect(() => {
     // (1) New user. Create new user and session
     // (2) Old user, session over. Check local storage first to see session status. If status inactive, start new session.
     // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session.
+
 
     // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session.
     const handleFetchSession = async (user_id: string | null, session_id: string | null) => {
@@ -95,8 +90,9 @@ export const Main: React.FC = () => {
             players: players,
           }),
         );
+        openGuideModal();
       } else {
-        console.log("92");
+
         // check if session is active or expired.
         const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
 
@@ -105,7 +101,6 @@ export const Main: React.FC = () => {
 
           // active session
           if (session_status === 0) {
-            console.log("103");
 
             //TODO: Check. May need to do a dispatch to update last guess, attempts, status
             await handleFetchSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"));
@@ -113,7 +108,9 @@ export const Main: React.FC = () => {
 
           // inactive session. Either user lost or won
           else {
+           
             const session = await createSession(localStorage.getItem("rank_five_user_id"));
+            console.log(session);
             resetGameLocalStorage(session.session_id);
             dispatch(resetGameState());
 
@@ -183,17 +180,9 @@ export const Main: React.FC = () => {
       <section className="w-3/5 mx-auto text-center my-4 ">
         <h2 className="font-semibold text-white text-2xl">
           Attempts left:{" "}
-          {/* <span
-            className={
-              attempts === 0
-                ? "text-green-500"
-                : attempts === 1
-                ? "text-orange-500"
-                : "text-red-500"
-            }
-          > */}
+      
             {MAX_ATTEMPTS - attempts}
-          {/* </span> */}
+
           , Category: PPG
         </h2>
       </section>
@@ -204,6 +193,8 @@ export const Main: React.FC = () => {
         isVisible={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]").length > 0}
       />
       <Drag />
+      <GuideModal isOpen={isGuideModalOpen} onOpenChange={onGuideModalChange} />
+
     </div>
   );
 };

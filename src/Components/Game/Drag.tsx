@@ -89,7 +89,7 @@ export const Drag: React.FC = () => {
       <div className="w-full flex flex-col items-center space-y-10 mt-6">
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="w-[40%] flex-nowrap">
+            <div className="w-[30%] flex-nowrap">
               <div className="text-2xl font-semibold  w-full text-center mb-6 py-1 bg-white text-slate-800">PLAYERS</div>
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
@@ -120,7 +120,7 @@ export const Drag: React.FC = () => {
               </Droppable>
             </div>
 
-            <div className="w-[40%] flex-nowrap">
+            <div className="w-[30%] flex-nowrap">
               <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800">GUESSES</div>
               <Droppable droppableId="droppable2">
                 {(provided, snapshot) => (
