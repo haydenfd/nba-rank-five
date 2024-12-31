@@ -90,7 +90,7 @@ export const Drag: React.FC = () => {
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="w-[30%] flex-nowrap">
-              <div className="text-2xl font-semibold  w-full text-center mb-6 py-1 bg-white text-slate-800">PLAYERS</div>
+              <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800 border-2 border-black">PLAYERS</div>
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps}>
@@ -121,7 +121,7 @@ export const Drag: React.FC = () => {
             </div>
 
             <div className="w-[30%] flex-nowrap">
-              <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800">GUESSES</div>
+              <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800 border-2 border-black">GUESSES</div>
               <Droppable droppableId="droppable2">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps} className="flex-1">
@@ -159,7 +159,7 @@ export const Drag: React.FC = () => {
                 attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0
                   ? startNewGame
                   : handleSubmitAttempt
-              }
+                }
               isDisabled={!(guesses.length === CORRECT_GUESSES)}
               className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850  hover:border-black"
             >

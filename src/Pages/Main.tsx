@@ -13,7 +13,7 @@ import { createNewUser } from "../Api/Lib/User";
 import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 import { GuideModal } from "../Components/Modals/GuideModal";
 import { useDisclosure } from "@nextui-org/react";
-
+import { Button } from "@nextui-org/react";
 interface CircularImageProps {
   src: string;
   alt: string;
@@ -140,6 +140,7 @@ export const Main: React.FC = () => {
         );
 
         setScores(response_data.scores);
+        console.log(response_data.scores);
 
         if (response_data.session_status === 0) {
           toast(
@@ -179,19 +180,25 @@ export const Main: React.FC = () => {
       />
       <section className="w-3/5 mx-auto text-center my-4 ">
         <h2 className="font-semibold text-white text-2xl">
-          Attempts left:{" "}
-      
+          Attempts left:{" "}      
             {MAX_ATTEMPTS - attempts}
-
-          , Category: PPG
         </h2>
       </section>
 
-    <GuessCrumbs
-        guesses={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]")}
-        scores={scores}
-        isVisible={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]").length > 0}
-      />
+      {attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0 ? (
+            <Button
+            onClick={onOpenSolutionModal}
+            className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 w-[20%] mx-auto hover:border-black"
+          >
+            Solution
+          </Button>
+      ) : (
+            <GuessCrumbs
+              guesses={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]")}
+              scores={scores}
+              isVisible={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]").length > 0}
+            />
+      ) }
       <Drag />
       <GuideModal isOpen={isGuideModalOpen} onOpenChange={onGuideModalChange} />
 
