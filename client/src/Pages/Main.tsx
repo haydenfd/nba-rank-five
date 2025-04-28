@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Drag } from "../Components/Game/Drag";
-import { GuessCrumbs } from "../Components/Game/GuessCrumbs";
 import { Nav } from "../Components/Nav/Nav";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../Store/store";
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import { SolutionModal } from "../Components/Modals/SolutionModal";
-import { initializeGame, resetGameState } from "../Store/snapshotSlice";
 import { MAX_ATTEMPTS } from "../Utils/globals";
-import { evaluateAttempt, fetchSession, createSession } from "../Api/Lib/Session";
-import { createNewUser } from "../Api/Lib/User";
-import { resetGameLocalStorage, initializeNewUserLocalStorage } from "../Utils/game";
 import { GuideModal } from "../Components/Modals/GuideModal";
 import { useDisclosure } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
@@ -39,152 +32,72 @@ export const CircularImage: React.FC<CircularImageProps> = ({
     </div>
   );
 };
-
-
 export default CircularImage;
+
+type AttemptsType = 0 | 1 | 2;
+
+
+
 export const Main: React.FC = () => {
-  const dispatch = useDispatch();
-  const attempts = useSelector((state: RootState) => state.snapshot.attempts);
-  const [scores, setScores] = useState<number[]>([]);
+  const [x, setX] = useState<any[]>([]);
+  const [attempts, setAttempts] = useState<AttemptsType>(0);
   const { isOpen: isGuideModalOpen, onOpen: openGuideModal, onOpenChange: onGuideModalChange } = useDisclosure();
   const { isOpen: isOpenSolutionModal, onOpen: onOpenSolutionModal, onOpenChange: onOpenSolutionModalChange } = useDisclosure();
 
 
+
   useEffect(() => {
-    // (1) New user. Create new user and session
-    // (2) Old user, session over. Check local storage first to see session status. If status inactive, start new session.
-    // (3) Old user, ongoing session. Check local storage to see if session status is 0. If so, retrieve active session.
-
-
-    // internal functions - retrieveSession, checkUser. TODO: Add 1 for initializing new session.
-    const handleFetchSession = async (user_id: string | null, session_id: string | null) => {
-      if (user_id && session_id) {
-        const session = await fetchSession(user_id, session_id);
-        dispatch(
-          initializeGame({
-            players: session.players,
-          }),
-        );
+    const createSession = async (user_id: string) => {
+      try {
+        const res = await fetch("https://nkc0fg59d8.execute-api.us-west-1.amazonaws.com/dev/sessions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id }), 
+        });
+        const data = await res.json();
+        console.log("Session created:", data);
+        setX(data.players)
+        return data; 
+      } catch (error) {
+        console.error("Error creating session:", error);
+        throw error;
+      }
+    };
+    
+  
+    const createUser = async () => {
+      try {
+        const res = await fetch("https://nkc0fg59d8.execute-api.us-west-1.amazonaws.com/dev/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}), 
+        });
+        const data = await res.json();
+        console.log("Created user ID:", data.user.user_id);
+        localStorage.setItem("rankd_user_id", data.user.user_id);
+      } catch (error) {
+        console.error("Error creating user:", error);
       }
     };
 
-    const handleCreateNewUser = async () => {
-      const { user_id, session_id, players } = await createNewUser();
-      return {
-        user_id,
-        session_id,
-        players,
-      };
-    };
 
-    // main setup client func. Uses above internal funcs
-    const setupClient = async () => {
-      const userIdLocalStorage = localStorage.getItem("rank_five_user_id");
+    createUser();
+    createSession(localStorage.getItem("rankd_user_id") || "");
+  }, []);
 
-      if (!userIdLocalStorage) {
-        // initialize new user
-        const { user_id, session_id, players } = await handleCreateNewUser();
-        initializeNewUserLocalStorage(user_id, session_id);
-        dispatch(
-          initializeGame({
-            players: players,
-          }),
-        );
-        openGuideModal();
-      } else {
-
-        // check if session is active or expired.
-        const sessionStatusLocalStorage = localStorage.getItem("rank_five_session_status");
-
-        if (sessionStatusLocalStorage) {
-          const session_status = Number(JSON.parse(sessionStatusLocalStorage));
-
-          // active session
-          if (session_status === 0) {
-
-            //TODO: Check. May need to do a dispatch to update last guess, attempts, status
-            await handleFetchSession(localStorage.getItem("rank_five_user_id"), localStorage.getItem("rank_five_session_id"));
-          }
-
-          // inactive session. Either user lost or won
-          else {
-           
-            const session = await createSession(localStorage.getItem("rank_five_user_id"));
-            console.log(session);
-            resetGameLocalStorage(session.session_id);
-            dispatch(resetGameState());
-
-            dispatch(
-              initializeGame({
-                players: session.players,
-              }),
-            );
-          }
-        }
-      }
-    };
-
-    setupClient();
-  }, [dispatch]);
-
-  useEffect(() => {
-    // Problem - this use effect runs on refreshing website. Right after game is done.
-    if (attempts > 0 && Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) === 0) {
-      const handleAttempt = async () => {
-        const guessesArray = JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]");
-        const response_data = await evaluateAttempt(
-          localStorage.getItem("rank_five_user_id"),
-          localStorage.getItem("rank_five_session_id"),
-          guessesArray,
-          attempts,
-        );
-
-        setScores(response_data.scores);
-        console.log(response_data.scores);
-
-        if (response_data.session_status === 0) {
-          toast(
-            `You got ${response_data.scores.filter((s: number) => s !== 1).length} guess${
-              response_data.scores.filter((s: number) => s !== 1).length === 1 ? "" : "es"
-            } right!`,
-            {
-              position: "top-center",
-              duration: 3000,
-            },
-          );
-        } else {
-          const sol = response_data.solution;
-
-          if (sol) {
-            localStorage.setItem("rank_five_session_solution", JSON.stringify(response_data.solution));
-            onOpenSolutionModal();
-          }
-        }
-
-        localStorage.setItem("rank_five_session_status", JSON.stringify(response_data.session_status));
-      };
-
-      handleAttempt();
-    }
-  }, [attempts]);
 
   return (
     <div className="w-full h-full flex flex-col pb-4">
       <Nav />
       <Toaster position="top-center" duration={1750} />
-      <SolutionModal
+      {/* <SolutionModal
         isOpen={isOpenSolutionModal}
         onOpenChange={onOpenSolutionModalChange}
         scores={scores}
         solution={JSON.parse(localStorage.getItem("rank_five_session_solution") || "[]")}
-      />
-      <section className="w-3/5 mx-auto text-center my-4 ">
-        <h2 className="font-semibold text-white text-2xl">
-          Attempts left:{" "}      
-            {MAX_ATTEMPTS - attempts}
-        </h2>
-      </section>
+      /> */}
 
+{/* 
       {attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0 ? (
             <Button
             onClick={onOpenSolutionModal}
@@ -198,8 +111,8 @@ export const Main: React.FC = () => {
               scores={scores}
               isVisible={JSON.parse(localStorage.getItem("rank_five_last_guess") || "[]").length > 0}
             />
-      ) }
-      <Drag />
+      ) } */}
+      {x.length > 0 && <Drag playersList={x} attempts={attempts} handleAttempts={setAttempts}/>}
       <GuideModal isOpen={isGuideModalOpen} onOpenChange={onGuideModalChange} />
 
     </div>

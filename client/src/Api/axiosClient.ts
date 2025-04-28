@@ -1,10 +1,10 @@
 import axios from "axios";
 
+
 export const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-  httpsAgent: true,
+  baseURL: "https://nkc0fg59d8.execute-api.us-west-1.amazonaws.com/dev",
   headers: {
     "Content-Type": "application/json",
-    Accept: "application/json",
   },
 });
+

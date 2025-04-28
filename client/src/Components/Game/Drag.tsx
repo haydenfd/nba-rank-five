@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { getItemStyle, getListStyle } from "../../Utils/drag";
 import { Button } from "@nextui-org/react";
-import { PlayerDataInterface } from "../../Types/store";
 import { DropResult, DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./Card";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store/store";
-import { mutateGuesses, incrementAttempts, initializeGame, resetGameState } from "../../Store/snapshotSlice";
+import { useDispatch } from "react-redux";
+import { mutateGuesses, initializeGame, resetGameState } from "../../Store/snapshotSlice";
 import { createSession } from "../../Api/Lib/Session";
 import { resetGameLocalStorage } from "../../Utils/game";
 import { CORRECT_GUESSES, MAX_ATTEMPTS } from "../../Utils/globals";
 
-export const Drag: React.FC = () => {
-  const snap_players = useSelector((state: RootState) => state.snapshot.players);
-  const attempts = useSelector((state: RootState) => state.snapshot.attempts);
+type AttemptsType = 0 | 1 | 2;
+
+interface DragProps {
+  playersList: any[]; // TODO: amend
+  attempts: AttemptsType;
+  handleAttempts: React.Dispatch<React.SetStateAction<AttemptsType>>;
+}
+
+export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempts }) => {
 
   const dispatch = useDispatch();
-  const [players, setPlayers] = useState<PlayerDataInterface[]>(snap_players);
-  const [guesses, setGuesses] = useState<PlayerDataInterface[]>([]);
+  const [players, setPlayers] = useState<any[]>([]);
+  const [guesses, setGuesses] = useState<any[]>([]);
 
   useEffect(() => {
-    if (snap_players && snap_players.length > 0) {
-      setPlayers(snap_players);
-      console.log(snap_players);
-    }
-  }, [snap_players]);
+    console.log('Wow')
+    console.log(playersList)
+    setPlayers(playersList);
+  }, [playersList]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -57,18 +60,21 @@ export const Drag: React.FC = () => {
     }
   };
 
+  const incrementAttempts = () => {
+    handleAttempts((prev) => {
+      if (prev < 3) {
+        return (prev + 1) as AttemptsType;
+      }
+      return prev;
+    });
+  };
+
   const handleSubmitAttempt = async () => {
-    // Increment attempts across store and local storage.
-    // Do bounds checking here because useSelector is async.
-    if (attempts < MAX_ATTEMPTS) {
-      dispatch(incrementAttempts());
-      localStorage.setItem("rank_five_session_attempts", JSON.stringify(attempts + 1));
-
-      // maybe move the toast notif here? TODO: deal with toast issue.
-
-      dispatch(mutateGuesses(guesses));
-      localStorage.setItem("rank_five_last_guess", JSON.stringify(guesses));
-    }
+    // increment attempts
+    // send to lambda for evaluating the guess
+    // prepare the guess list.
+    const guesses_ids = guesses.map((player) => player.PLAYER_ID);
+    console.log(guesses_ids);
   };
 
   const startNewGame = async () => {
@@ -86,6 +92,9 @@ export const Drag: React.FC = () => {
 
   return (
     <>
+      <section className="mx-auto text-white text-xl font-medium my-6">
+        Attempts left: {3 - attempts}
+      </section>
       <div className="w-full flex flex-col items-center space-y-10 mt-6">
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
@@ -97,7 +106,7 @@ export const Drag: React.FC = () => {
                     {players.map((player, index) => (
                       <Draggable
                         key={player.PLAYER_ID}
-                        draggableId={player.PLAYER_ID}
+                        draggableId={player.PLAYER_ID.toString()}
                         index={index}
                         // isDragDisabled = {isGameOver}
                       >
@@ -128,7 +137,7 @@ export const Drag: React.FC = () => {
                     {guesses.map((guess, index) => (
                       <Draggable
                         key={guess.PLAYER_ID}
-                        draggableId={guess.PLAYER_ID}
+                        draggableId={guess.PLAYER_ID.toString()}
                         index={index}
                         // isDragDisabled = {isGameOver}
                       >
