@@ -47,9 +47,9 @@ export const handler = async (
     }
 
     await mongoClient.connect();
-    const db = mongoClient.db("nba-rank-five");
+    const db = mongoClient.db(process.env.MONGODB_DATABASE!);
 
-    const playerCollection = db.collection('rank-six-player-collection');
+    const playerCollection = db.collection(process.env.MONGODB_PLAYER_COLLECTION!);
 
     const players = await playerCollection.aggregate([{ $sample: { size: 6 } }]).toArray();
 

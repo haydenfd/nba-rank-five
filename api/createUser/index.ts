@@ -10,8 +10,8 @@ export const handler = async (
   try {
 
     await mongoClient.connect();
-    const db = mongoClient.db("nba-rank-five");
-    const userCollection = db.collection("rank-five-users");
+    const db = mongoClient.db(process.env.MONGODB_DATABASE!);
+    const userCollection = db.collection(process.env.MONGODB_USER_COLLECTION!);
 
     const userId = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
     const newUser = {
