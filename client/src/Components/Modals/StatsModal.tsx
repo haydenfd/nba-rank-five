@@ -1,43 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import { StatsBox } from "./StatsBox";
-import { GenericModalsPropsInterface, StatsModalStateInterface } from "../../Types/modals";
+import { GenericModalsPropsInterface } from "../../Types/modals";
 import { computeWeightedAvg, computeWinPercentage } from "../../Utils/game";
-import { fetchUserStats } from "../../Api/Lib/User";
-const initialState: StatsModalStateInterface = {
-  games_played: 0,
-  wins: 0,
-  longest_streak: 0,
-  current_streak: 0,
-  attempts_distribution: [0, 0, 0],
-};
+import { useStatsContext } from "../../Context/StatsContext";
 
 export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOpenChange }) => {
-  const [stats, setStats] = useState<StatsModalStateInterface>(initialState);
-  const [avgAttempts, setAvgAttempts] = useState<number>(0);
-
-  useEffect(() => {
-    const handleFetchStats = async () => {
-      const userId = localStorage.getItem("rank_five_user_id");
-      if (!userId) {
-        console.error("User ID is missing in localStorage");
-        return;
-      } else {
-        const stats = await fetchUserStats(userId);
-
-        if (stats) {
-          setStats(stats);
-          setAvgAttempts(computeWeightedAvg(stats.attempts_distribution, stats.wins));
-        } else {
-          console.error("Stats returned null");
-        }
-      }
-    };
-
-    if (isOpen) {
-      handleFetchStats();
-    }
-  }, [isOpen]);
+  const { stats } = useStatsContext();
+  const avgAttempts = computeWeightedAvg(
+    stats.attempts_per_win_distro.slice(0, 3) as [number, number, number],
+    stats.games_won
+  );
 
   return (
     <Modal
@@ -61,10 +34,10 @@ export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOp
                   <StatsBox value={String(stats.games_played)} context="Games Played" />
                 </div>
                 <div className="h-28 p-2 bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
-                  <StatsBox value={`${computeWinPercentage(stats.wins, stats.games_played)}%`} context="Win Percentage" />
+                  <StatsBox value={`${computeWinPercentage(stats.games_won, stats.games_played)}%`} context="Win Percentage" />
                 </div>
                 <div className="h-28 p-2 bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
-                  <StatsBox value={`${stats.current_streak}`} context="Current Streak" />
+                  <StatsBox value={`${stats.curr_streak}`} context="Current Streak" />
                 </div>
                 <div className="h-28 bg-gray-700 text-white flex justify-center items-center sm:w-1/2 md:w-[40%] rounded-xl">
                   <StatsBox value={`${stats.longest_streak}`} context="Longest Streak" />

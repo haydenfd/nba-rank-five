@@ -8,7 +8,7 @@ interface SessionResponse {
 
 type UserStatsInterface = {
     games_played: number;
-    attempts_per_win_distro: number[];
+    attempts_per_win_distro: [number, number, number];
     games_won: number;
     curr_streak: number;
     longest_streak: number;
@@ -49,6 +49,23 @@ export const createUser = async (): Promise<UserInterface> => {
 export const fetchUser = async (user_id: string): Promise<UserInterface> => {
     try {
         const { data } = await apiClient.post<UserInterface>('/fetch-user', {
+            user_id
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        throw error;    
+    }
+}
+
+export const fetchSession = async (user_id: string): Promise<any> => {
+    try {
+        const { data } = await apiClient.post<any>('/fetch-session', {
             user_id
         }, {
             headers: {
