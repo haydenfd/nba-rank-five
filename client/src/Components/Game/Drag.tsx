@@ -8,6 +8,7 @@ import { mutateGuesses, initializeGame, resetGameState } from "../../Store/snaps
 import { createSession } from "../../Api/Lib/Session";
 import { resetGameLocalStorage } from "../../Utils/game";
 import { CORRECT_GUESSES, MAX_ATTEMPTS } from "../../Utils/globals";
+import { GuessCrumbs } from "./GuessCrumbs";
 
 type AttemptsType = 0 | 1 | 2;
 
@@ -22,7 +23,7 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
   const dispatch = useDispatch();
   const [players, setPlayers] = useState<any[]>([]);
   const [guesses, setGuesses] = useState<any[]>([]);
-
+  const [lastGuess, setLastGuess] = useState<any[]>([]);
   useEffect(() => {
     console.log('Wow')
     console.log(playersList)
@@ -60,6 +61,34 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
     }
   };
 
+  const evaluateGuesses = async () => {
+    console.log(guesses.map((g) => g.PLAYER_ID))
+    console.log(JSON.parse(localStorage.getItem("x") || "[]"))
+    try {
+      const res = await fetch("https://nkc0fg59d8.execute-api.us-west-1.amazonaws.com/dev/guess", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          guesses: guesses.map((g) => g.PLAYER_ID),  // <-- your guesses array
+          user_id: "123",             // <-- from localStorage or your app state
+          attempts: 2,                              // <-- current attempt number
+          solution: JSON.parse(localStorage.getItem("x") || "[]") // <-- TEMPORARY: only needed for now if solution is still being passed manually
+        }),
+      });
+  
+      const data = await res.json();
+      console.log("YOU got 3 correct:", data);
+  
+      // data will have:
+      // data.scores = [1, 0, 0, 0, 0, 1]
+      // data.result = 0 / 1 / 2 (active / win / loss)
+  
+    } catch (error) {
+      console.error("Error evaluating guess:", error);
+    }
+  };
   const incrementAttempts = () => {
     handleAttempts((prev) => {
       if (prev < 3) {
@@ -74,7 +103,9 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
     // send to lambda for evaluating the guess
     // prepare the guess list.
     const guesses_ids = guesses.map((player) => player.PLAYER_ID);
+    setLastGuess([...guesses]);
     console.log(guesses_ids);
+    evaluateGuesses();
   };
 
   const startNewGame = async () => {
@@ -92,14 +123,20 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
 
   return (
     <>
-      <section className="mx-auto text-white text-xl font-medium my-6">
+      <section className="mx-auto text-white text-xl font-medium my-2">
+        Category: PPG
+      </section>
+      <section className="mx-auto text-white text-xl font-medium my-2">
         Attempts left: {3 - attempts}
+      </section>
+      <section>
+        <GuessCrumbs guesses={lastGuess} isVisible={true}/>
       </section>
       <div className="w-full flex flex-col items-center space-y-10 mt-6">
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="w-[30%] flex-nowrap">
-              <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800 border-2 border-black">PLAYERS</div>
+              {/* <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800 border-2 border-black">PLAYERS</div> */}
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps}>
@@ -130,7 +167,6 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
             </div>
 
             <div className="w-[30%] flex-nowrap">
-              <div className="text-2xl font-bold  w-full text-center mb-6 py-1 bg-white text-slate-800 border-2 border-black">GUESSES</div>
               <Droppable droppableId="droppable2">
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps} className="flex-1">

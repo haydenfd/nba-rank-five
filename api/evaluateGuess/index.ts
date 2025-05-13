@@ -34,12 +34,20 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       return {
         statusCode: 200,
         body: JSON.stringify({ scores, result }),
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type",
+          },        
       };
     } catch (error) {
       console.error("Error evaluating guesses:", error);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: "Internal server error." }),
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type",
+          },        
       };
     }
   };

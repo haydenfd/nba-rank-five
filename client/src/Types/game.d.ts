@@ -2,7 +2,6 @@ import { PlayerDataInterface } from "./store";
 
 interface GuessCrumbsPropsInterface {
   guesses: PlayerDataInterface[];
-  scores: number[];
   isVisible?: boolean;
 }
 

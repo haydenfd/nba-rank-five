@@ -14,10 +14,14 @@ export const handler = async (
     const userCollection = db.collection(process.env.MONGODB_USER_COLLECTION!);
 
     const userId = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+
     const newUser = {
       user_id: userId,
       games_played: 0,
       games_won: 0,
+      attempts_per_win_distro: [0, 0, 0],
+      curr_streak: 0,
+      longest_streak: 0,
     };
 
     await userCollection.insertOne(newUser);
@@ -28,9 +32,7 @@ export const handler = async (
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
       },
-      body: JSON.stringify({
-        user: newUser,
-      }),
+      body: JSON.stringify(newUser),
     };
   } catch (e) {
     return {
