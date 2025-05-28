@@ -1,82 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { getItemStyle, getListStyle } from "../../Utils/drag";
+import React from "react";
+import { getItemStyle, getListStyle } from "../../Utils/DragDropConfigs";
 import { Button } from "@nextui-org/react";
 import { DropResult, DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./Card";
-import { createSession } from "../../Api/Lib/Session";
-import { CORRECT_GUESSES, MAX_ATTEMPTS } from "../../Utils/globals";
+import { useGameContext,  AttemptsType } from "../../Context/GameContext";
 
-type AttemptsType = 0 | 1 | 2;
-
-interface DragProps {
-  playersList: any[]; 
-  attempts: AttemptsType;
-  handleAttempts: React.Dispatch<React.SetStateAction<AttemptsType>>;
-}
-
-export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempts }) => {
-  const [players, setPlayers] = useState<any[]>([]);
-
-  useEffect(() => {
-    setPlayers(playersList);
-  }, [playersList]);
+export const Drag: React.FC = () => {
+  const {
+    players,
+    setPlayers,
+    category,
+    attempts,
+    setAttempts,
+    // evaluateGuesses,
+    setLastAttempt,
+    resetToLastAttempt,
+  } = useGameContext();
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination) return;
 
-    const srcIndex = source.index;
-    const destIndex = destination.index;
-
-    const newPlayers = [...players];
-    const [removed] = newPlayers.splice(srcIndex, 1);
-    newPlayers.splice(destIndex, 0, removed);
-    setPlayers(newPlayers);
-  };
-
-  const evaluateGuesses = async () => {
-    try {
-      const res = await fetch("https://nkc0fg59d8.execute-api.us-west-1.amazonaws.com/dev/guess", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          guesses: players.map((p) => p.PLAYER_ID),
-          user_id: "123",
-          attempts: attempts,
-          solution: JSON.parse(localStorage.getItem("x") || "[]")
-        }),
-      });
-  
-      const data = await res.json();
-      console.log("Guess evaluation result:", data);
-  
-    } catch (error) {
-      console.error("Error evaluating guess:", error);
-    }
+    const updatedPlayers = [...players];
+    const [removed] = updatedPlayers.splice(source.index, 1);
+    updatedPlayers.splice(destination.index, 0, removed);
+    setPlayers(updatedPlayers);
   };
 
   const handleSubmitAttempt = async () => {
-    handleAttempts((prev) => {
-      if (prev < 3) {
-        return (prev + 1) as AttemptsType;
-      }
-      return prev;
-    });
-    evaluateGuesses();
-  };
-
-  const startNewGame = async () => {
-    const session = await createSession(localStorage.getItem("rank_five_user_id"));
-    setPlayers(session.players);
+    // console.log(players);
+    if (attempts <= 2) {
+      const nextAttempt = (attempts + 1) as AttemptsType;
+      setAttempts(nextAttempt);
+      setLastAttempt(players);
+    }
+    // await evaluateGuesses();
   };
 
   return (
     <>
       <section className="mx-auto text-white text-xl font-medium my-2">
-        Category: PPG
+        Category: {category}
       </section>
       <section className="mx-auto text-white text-xl font-medium my-2">
         Attempts left: {3 - attempts}
@@ -87,9 +52,9 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
             <div className="w-[60%] flex-nowrap">
               <Droppable droppableId="droppable">
                 {(provided, snapshot) => (
-                  <div 
-                    ref={provided.innerRef} 
-                    style={getListStyle(snapshot)} 
+                  <div
+                    ref={provided.innerRef}
+                    style={getListStyle(snapshot)}
                     {...provided.droppableProps}
                   >
                     {players.map((player, index) => (
@@ -103,12 +68,15 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                            style={getItemStyle(
+                              snapshot.isDragging,
+                              provided.draggableProps.style
+                            )}
                           >
-                            <Card 
-                              id={player.PLAYER_ID} 
-                              name={player.PLAYER_NAME} 
-                              ppg="" 
+                            <Card
+                              id={player.PLAYER_ID.toString()}
+                              name={player.PLAYER_NAME}
+                              ppg=""
                               code={player.CODE}
                             />
                           </div>
@@ -123,23 +91,19 @@ export const Drag: React.FC<DragProps> = ({ playersList, attempts, handleAttempt
           </DragDropContext>
         </div>
         <section className="w-full">
-          <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-14">
-          <Button
+          <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-8">
+            <Button
               isDisabled={attempts === 0}
+              onClick={resetToLastAttempt}
               className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
             >
               Reset to last attempt
-            </Button>          
+            </Button>
             <Button
-              onClick={
-                attempts === MAX_ATTEMPTS || Number(JSON.parse(localStorage.getItem("rank_five_session_status") || "0")) !== 0
-                  ? startNewGame
-                  : handleSubmitAttempt
-              }
-              isDisabled={players.length !== CORRECT_GUESSES}
+              onClick={handleSubmitAttempt}
               className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
             >
-              Make guess
+              Submit guess
             </Button>
           </div>
         </section>

@@ -79,3 +79,21 @@ export const fetchSession = async (user_id: string): Promise<any> => {
         throw error;    
     }
 }
+
+export const makeGuess = async (guesses: string[], user_id: string, attempts: number) => {
+  try {
+    const { data } = await apiClient.post<any>('/guess', {
+      guesses,
+      user_id,
+      attempts,
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error making guess: ", error);
+  }
+};

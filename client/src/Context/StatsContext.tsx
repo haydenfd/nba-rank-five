@@ -39,9 +39,11 @@ export const StatsContextProvider:React.FC<{ children : ReactNode }> = ({ childr
 };
 
 export const useStatsContext = () => {
-  const context = useContext(StatsContext);
-  if (!context) {
+  const ctx = useContext(StatsContext);
+
+  if (!ctx) {
     throw new Error("useStatsContext must be used within a StatsContextProvider");
   }
-  return context;
+
+  return ctx;
 };

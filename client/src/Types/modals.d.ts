@@ -12,7 +12,7 @@ interface SolutionModalPropsInterface extends GenericModalsPropsInterface {
 
 interface StatsBoxPropsInterface {
   value: string;
-  context: string;
+  ctx: string;
 }
 
 interface StatsModalStateInterface {

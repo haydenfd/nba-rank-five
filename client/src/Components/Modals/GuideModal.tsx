@@ -7,7 +7,7 @@ export const GuideModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOp
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      placement="top"
+      placement="center"
       size="3xl"
       classNames={{
         base: "p-2",

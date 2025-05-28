@@ -3,15 +3,16 @@ import { MongoClient } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import { Redis } from '@upstash/redis';
 
+const CATEGORIES = ['PPG', 'APG', 'RPG', 'GP'] as const;
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const generateSolution = (players:any) => {
+const generateSolution = (players: any, category: string) => {
   return [...players]
-    .sort((a, b) => b.PPG - a.PPG)
+    .sort((a, b) => b[category] - a[category])
     .map((player) => player.PLAYER_ID);
 };
 
@@ -49,9 +50,23 @@ export const handler = async (
     await mongoClient.connect();
     const db = mongoClient.db(process.env.MONGODB_DATABASE!);
 
+    const selectedCategory = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+    
     const playerCollection = db.collection(process.env.MONGODB_PLAYER_COLLECTION!);
-    const players = await playerCollection.aggregate([{ $sample: { size: 6 } }]).toArray();
-    const solution = generateSolution(players);
+    const players = await playerCollection.aggregate([
+      { $sample: { size: 5 } },
+      { 
+        $project: {
+          PLAYER_ID: 1,
+          PLAYER_NAME: 1,
+          CODE: 1,
+          [selectedCategory]: 1,
+          _id: 0
+        }
+      }
+    ]).toArray();
+    
+    const solution = generateSolution(players, selectedCategory);
     
     const session_id = uuidv4();
     const session = {
@@ -60,8 +75,9 @@ export const handler = async (
       players,
       solution,
       attempts: 0,
+      category: selectedCategory
     };
-
+    
 
     await redis.set(`session:user:${user_id}`, JSON.stringify(session));
 
