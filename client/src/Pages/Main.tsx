@@ -9,35 +9,8 @@ import { useStatsContext } from "../Context/StatsContext";
 import { useGameContext, Categories } from "../Context/GameContext";
 
 
-
-interface CircularImageProps {
-  src: string;
-  alt: string;
-  size?: string;
-  fit?: 'contain' | 'cover' | 'scale-down';
-}
-
-export const CircularImage: React.FC<CircularImageProps> = ({
-  src,
-  alt,
-  size = 'w-24 h-24',
-  fit = 'contain'
-}) => {
-  return (
-    <div className={`${size} rounded-full overflow-hidden flex items-center justify-center bg-white ml-4`}>
-      <div className="w-full h-full flex items-center justify-center">
-        <img
-          src={src}
-          alt={alt}
-          className={`max-w-full max-h-full object-${fit}`}
-        />
-      </div>
-    </div>
-  );
-};
-export default CircularImage;
 export const Main: React.FC = () => {
-  const { setPlayers, setCategory } = useGameContext();
+  const { players, category, attempts, lastAttempt, setAttempts, setLastAttempt, setLastAttemptCorrect, lastAttemptCorrect, setPlayers, setCategory } = useGameContext();
   const { updateStats } = useStatsContext();
 
   const {
@@ -54,8 +27,25 @@ export const Main: React.FC = () => {
 
   useEffect(() => {
     const initializeGame = async () => {
+      const savedState = localStorage.getItem("ranked_game_state");
+  
+      if (savedState) {
+        try {
+          const parsed = JSON.parse(savedState);
+          if (parsed.players) setPlayers(parsed.players);
+          if (parsed.category) setCategory(parsed.category);
+          if (parsed.attempts !== undefined) setAttempts(parsed.attempts);
+          if (parsed.lastAttempt) setLastAttempt(parsed.lastAttempt);
+          if (parsed.lastAttemptCorrect !== undefined) setLastAttemptCorrect(parsed.lastAttemptCorrect);
+          return; 
+        } catch (e) {
+          console.error("Failed to restore local game state:", e);
+        }
+      }
+  
+      // 🧾 If no local state, fallback to session-based initialization
       const userIdLocalStorage = localStorage.getItem("ranked_user_id");
-
+  
       try {
         if (!userIdLocalStorage) {
           openGuideModal();
@@ -76,9 +66,25 @@ export const Main: React.FC = () => {
         console.error("Error initializing game:", error);
       }
     };
-
+  
     initializeGame();
   }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const gameState = {
+        players,
+        category,
+        attempts,
+        lastAttempt,
+        lastAttemptCorrect,
+      };
+      localStorage.setItem("ranked_game_state", JSON.stringify(gameState));
+    };
+  
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [players, category, attempts, lastAttempt, lastAttemptCorrect])
 
   return (
     <div className="w-full h-full flex flex-col pb-4">

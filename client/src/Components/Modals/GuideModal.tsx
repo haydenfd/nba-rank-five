@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
-import { GenericModalsPropsInterface } from "../../Types/modals";
+import { GenericModalsPropsInterface } from './Types'
 
 export const GuideModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOpenChange }) => {
   return (

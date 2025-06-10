@@ -2,7 +2,7 @@ import type { DroppableStateSnapshot } from "@hello-pangea/dnd";
 
 const grid = 4;
 const itemHeight = 70;
-const maxItems = 6;
+const maxItems = 5;
 const calculatedHeight = itemHeight * maxItems;
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({

@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import { StatsBox } from "./StatsBox";
-import { GenericModalsPropsInterface } from "../../Types/modals";
+import { GenericModalsPropsInterface } from  './Types';
 import { computeWeightedAvg, computeWinPercentage } from "../../Utils/StatComputations";
 import { useStatsContext } from "../../Context/StatsContext";
 

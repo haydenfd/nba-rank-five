@@ -1,5 +1,5 @@
 import React from "react";
-import { StatsBoxPropsInterface } from "../../Types/modals";
+import { StatsBoxPropsInterface } from './Types'
 
 export const StatsBox: React.FC<StatsBoxPropsInterface> = ({ value, ctx }) => {
   return (

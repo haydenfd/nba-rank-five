@@ -2,7 +2,7 @@ import React from "react";
 import { getItemStyle, getListStyle } from "../../Utils/DragDropConfigs";
 import { Button } from "@nextui-org/react";
 import { DropResult, DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { Card } from "./Card";
+import { PlayerCard } from "../PlayerCard/Card";
 import { useGameContext,  AttemptsType } from "../../Context/GameContext";
 
 export const Drag: React.FC = () => {
@@ -73,7 +73,7 @@ export const Drag: React.FC = () => {
                               provided.draggableProps.style
                             )}
                           >
-                            <Card
+                            <PlayerCard
                               id={player.PLAYER_ID.toString()}
                               name={player.PLAYER_NAME}
                               ppg=""

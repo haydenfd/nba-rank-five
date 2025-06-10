@@ -1,5 +1,5 @@
 import { CreateNewUserResponseInterface } from "../../Types/api";
-import { StatsModalStateInterface } from "../../Types/modals";
+import { StatsModalStateInterface } from "../../Components/Modals/Types"
 import { apiClient } from "../axiosClient";
 import { AxiosResponse } from "axios";
 

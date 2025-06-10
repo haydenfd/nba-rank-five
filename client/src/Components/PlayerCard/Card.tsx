@@ -1,8 +1,8 @@
 import React from "react";
-import { CardPropsInterface } from "../../Types/game";
-import CircularImage from "../../Pages/Main";
+import { PlayerCardPropsInterface } from "./Types";
+import { CircularImage } from "./CircularImage";
 
-export const Card: React.FC<CardPropsInterface> = ({ id, name, ppg = "", color = "black", code="" }) => {
+export const PlayerCard: React.FC<PlayerCardPropsInterface> = ({ id, name, ppg = "", color = "black", code="" }) => {
 
   return (
     <div className={`w-full flex flex-row space-x-4 items-center text-center text-${color}`}>

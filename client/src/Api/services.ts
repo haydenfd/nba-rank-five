@@ -1,3 +1,5 @@
+import { Categories } from '../Context/GameContext';
+import { PlayerType } from '../Types/players';
 import { apiClient } from './axiosClient';
 
 interface SessionResponse {
@@ -5,6 +7,11 @@ interface SessionResponse {
   solution: any;
 }
 
+interface FetchSessionResponse {
+  players: PlayerType[];
+  category: Categories;
+
+}
 
 type UserStatsInterface = {
     games_played: number;
@@ -22,6 +29,7 @@ type UserInterface = UserStatsInterface & {
 export const createSession = async (userId: string): Promise<SessionResponse> => {
   try {
     const { data } = await apiClient.post<SessionResponse>('/sessions', { user_id: userId });
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error creating session:", error);
@@ -72,6 +80,7 @@ export const fetchSession = async (user_id: string): Promise<any> => {
                 'Content-Type': 'application/json'
             }
         });
+        console.log('fetched session');
         console.log(data);
         return data;
     } catch (error) {
