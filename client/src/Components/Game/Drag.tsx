@@ -1,5 +1,5 @@
 import React from "react";
-import { getItemStyle, getListStyle } from "../../Utils/DragDropConfigs";
+import { getItemStyle, getListStyle } from "./DragDropConfigs";
 import { Button } from "@nextui-org/react";
 import { DropResult, DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { PlayerCard } from "../PlayerCard/Card";
@@ -29,7 +29,6 @@ export const Drag: React.FC = () => {
   };
 
   const handleSubmitAttempt = async () => {
-    // console.log(players);
     if (attempts <= 2) {
       const nextAttempt = (attempts + 1) as AttemptsType;
       setAttempts(nextAttempt);
@@ -95,13 +94,13 @@ export const Drag: React.FC = () => {
             <Button
               isDisabled={attempts === 0}
               onClick={resetToLastAttempt}
-              className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
+              className="p-6 bg-slate-300 border-[4px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
             >
               Reset to last attempt
             </Button>
             <Button
               onClick={handleSubmitAttempt}
-              className="p-6 bg-slate-300 border-[6px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
+              className="p-6 bg-slate-300 border-[4px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
             >
               Submit guess
             </Button>

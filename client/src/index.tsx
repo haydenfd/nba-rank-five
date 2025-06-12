@@ -6,6 +6,7 @@ import { Main } from "./Pages/Main";
 import { StatsContextProvider } from "./Context/StatsContext";
 import { GameProvider } from "./Context/GameContext";
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+
 root.render(
   <NextUIProvider>
     <StatsContextProvider>

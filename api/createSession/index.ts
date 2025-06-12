@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import { Redis } from '@upstash/redis';
 
-const CATEGORIES = ['PPG', 'APG', 'RPG', 'GP'] as const;
+const CATEGORIES = ['PPG', 'APG', 'RPG', 'GP'];
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -75,12 +75,34 @@ export const handler = async (
       players,
       solution,
       attempts: 0,
-      category: selectedCategory
+      lastGuessesAttempt: [],
+      lastGuessesCorrect: null,
+      category: selectedCategory,
     };
     
 
-    await redis.set(`session:user:${user_id}`, JSON.stringify(session));
 
+    await redis.hset(`session:user:${user_id}`, {
+      user_id,
+      session_id,
+      category: selectedCategory,
+      attempts: "0", // stored as string
+      players: JSON.stringify(players),
+      solution: JSON.stringify(solution),
+      lastGuessesAttempt: JSON.stringify([]),   
+      lastGuessesCorrect: JSON.stringify(null),     
+    });
+
+    console.log({
+      user_id,
+      session_id,
+      category: selectedCategory,
+      attempts: "0", // stored as string
+      players: JSON.stringify(players),
+      solution: JSON.stringify(solution),
+      lastGuessesAttempt: JSON.stringify([]),   
+      lastGuessesCorrect: JSON.stringify(null),     
+    })
     return {
       statusCode: 200,
       headers: {

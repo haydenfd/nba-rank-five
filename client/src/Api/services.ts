@@ -1,6 +1,15 @@
 import { Categories } from '../Context/GameContext';
-import { PlayerType } from '../Types/players';
 import { apiClient } from './axiosClient';
+
+type PlayerType = {
+  PLAYER_ID: number;
+  PLAYER_NAME: string;
+  CODE: string;
+  PPG?: number;
+  APG?: number;
+  RPG?: number;
+  GP?: number;
+}
 
 interface SessionResponse {
   players: any[];

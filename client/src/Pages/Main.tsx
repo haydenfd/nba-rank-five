@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Drag } from "../Components/Game/Drag";
 import { GuideModal } from "../Components/Modals/GuideModal";
 import { StatsModal } from "../Components/Modals/StatsModal";
@@ -12,7 +12,15 @@ import { useGameContext, Categories } from "../Context/GameContext";
 export const Main: React.FC = () => {
   const { players, category, attempts, lastAttempt, setAttempts, setLastAttempt, setLastAttemptCorrect, lastAttemptCorrect, setPlayers, setCategory } = useGameContext();
   const { updateStats } = useStatsContext();
-
+ 
+  const gameStateRef = useRef<any>({
+    players,
+    category,
+    attempts,
+    lastAttempt,
+    lastAttemptCorrect,
+  });
+  
   const {
     isOpen: isGuideModalOpen,
     onOpen: openGuideModal,
@@ -29,21 +37,20 @@ export const Main: React.FC = () => {
     const initializeGame = async () => {
       const savedState = localStorage.getItem("ranked_game_state");
   
-      if (savedState) {
-        try {
-          const parsed = JSON.parse(savedState);
-          if (parsed.players) setPlayers(parsed.players);
-          if (parsed.category) setCategory(parsed.category);
-          if (parsed.attempts !== undefined) setAttempts(parsed.attempts);
-          if (parsed.lastAttempt) setLastAttempt(parsed.lastAttempt);
-          if (parsed.lastAttemptCorrect !== undefined) setLastAttemptCorrect(parsed.lastAttemptCorrect);
-          return; 
-        } catch (e) {
-          console.error("Failed to restore local game state:", e);
-        }
-      }
+      // if (savedState) {
+      //   try {
+      //     const parsed = JSON.parse(savedState);
+      //     if (parsed.players) setPlayers(parsed.players);
+      //     if (parsed.category) setCategory(parsed.category);
+      //     if (parsed.attempts !== undefined) setAttempts(parsed.attempts);
+      //     if (parsed.lastAttempt) setLastAttempt(parsed.lastAttempt);
+      //     if (parsed.lastAttemptCorrect !== undefined) setLastAttemptCorrect(parsed.lastAttemptCorrect);
+      //     return; 
+      //   } catch (e) {
+      //     console.error("Failed to restore local game state:", e);
+      //   }
+      // }
   
-      // 🧾 If no local state, fallback to session-based initialization
       const userIdLocalStorage = localStorage.getItem("ranked_user_id");
   
       try {
@@ -71,20 +78,23 @@ export const Main: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    gameStateRef.current = {
+      players,
+      category,
+      attempts,
+      lastAttempt,
+      lastAttemptCorrect,
+    };
+  }, [players, category, attempts, lastAttempt, lastAttemptCorrect]);
+  
+  useEffect(() => {
     const handleBeforeUnload = () => {
-      const gameState = {
-        players,
-        category,
-        attempts,
-        lastAttempt,
-        lastAttemptCorrect,
-      };
-      localStorage.setItem("ranked_game_state", JSON.stringify(gameState));
+      localStorage.setItem("ranked_game_state", JSON.stringify(gameStateRef.current));
     };
   
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [players, category, attempts, lastAttempt, lastAttemptCorrect])
+  }, []); // Empty dependency array - runs only once
 
   return (
     <div className="w-full h-full flex flex-col pb-4">

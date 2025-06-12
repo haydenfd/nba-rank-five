@@ -1,5 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { PlayerType } from "../Types/players";
+
+type PlayerType = {
+    PLAYER_ID: number;
+    PLAYER_NAME: string;
+    CODE: string;
+    PPG?: number;
+    APG?: number;
+    RPG?: number;
+    GP?: number;
+}
+
 
 export enum Categories {
     POINTS_PER_GAME = "Points Per Game",

@@ -1,9 +1,19 @@
-import { PlayerType } from "../../Types/players";
 import { apiClient } from "../axiosClient";
 import { AxiosResponse } from "axios";
-import { FetchSessionResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface } from "../../Types/api";
+import { FetchSessionResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface } from "../Types";
 
 type AttemptsType = 0 | 1 | 2;
+export type PlayerType = {
+  PLAYER_ID: number;
+  PLAYER_NAME: string;
+  CODE: string;
+  PPG?: number;
+  APG?: number;
+  RPG?: number;
+  GP?: number;
+}
+
+
 const fetchSession = async (user_id: string, session_id: string): Promise<FetchSessionResponseInterface> => {
   try {
     const response: AxiosResponse<FetchSessionResponseInterface> = await apiClient.get(`/session/retrieve/${user_id}/${session_id}`);
