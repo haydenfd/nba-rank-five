@@ -1,5 +1,6 @@
-import { Categories } from '../Context/GameContext';
+import { CategoryType } from '../Context/GameContext';
 import { apiClient } from './axiosClient';
+import { PlayerListType } from './Types';
 
 type PlayerType = {
   PLAYER_ID: number;
@@ -11,6 +12,25 @@ type PlayerType = {
   GP?: number;
 }
 
+export interface _UserInterface {
+  games_played: number;
+  attempts_per_win_distro: [number, number, number];
+  games_won: number;
+  curr_streak: number;
+  longest_streak: number;
+  user_id: string;
+}
+
+export interface _SessionInterface {
+  user_id: string;
+  session_id: string;
+  attempts: 0 | 1 | 2 | 3;
+  category: "APG" | "PPG" | "RPG" | "GP";
+  lastGuessesAttempt: [] | [number, number, number, number, number];
+  lastGuessesCorrect: null | number;
+  players: PlayerType[];
+}
+
 interface SessionResponse {
   players: any[];
   solution: any;
@@ -18,7 +38,7 @@ interface SessionResponse {
 
 interface FetchSessionResponse {
   players: PlayerType[];
-  category: Categories;
+  category: CategoryType;
 
 }
 
@@ -35,9 +55,9 @@ type UserInterface = UserStatsInterface & {
 };
 
 
-export const createSession = async (userId: string): Promise<SessionResponse> => {
+export const createSession = async (userId: string): Promise<_SessionInterface> => {
   try {
-    const { data } = await apiClient.post<SessionResponse>('/sessions', { user_id: userId });
+    const { data } = await apiClient.post<_SessionInterface>('/create-session', { user_id: userId });
     console.log(data);
     return data;
   } catch (error) {
@@ -53,7 +73,7 @@ export const createSession = async (userId: string): Promise<SessionResponse> =>
 
 export const createUser = async (): Promise<UserInterface> => {
   try {
-    const { data } = await apiClient.post<UserInterface>('/user', {});
+    const { data } = await apiClient.post<_UserInterface>('/create-user', {});
     console.log(data);
     return data;
   } catch (error) {
@@ -80,9 +100,9 @@ export const fetchUser = async (user_id: string): Promise<UserInterface> => {
     }
 }
 
-export const fetchSession = async (user_id: string): Promise<any> => {
+export const fetchSession = async (user_id: string): Promise<_SessionInterface> => {
     try {
-        const { data } = await apiClient.post<any>('/fetch-session', {
+        const { data } = await apiClient.post<_SessionInterface>('/fetch-session', {
             user_id
         }, {
             headers: {

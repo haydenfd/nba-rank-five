@@ -45,3 +45,21 @@ interface EvaluateSessionAttemptInterface {
 }
 
 export type { FetchSessionResponseInterface, CreateNewUserResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface };
+
+
+interface PlayerType {
+  PLAYER_ID: number;
+  PLAYER_NAME: string;
+  CODE: string;
+  PPG?: number;
+  APG?: number;
+  RPG?: number;
+  GP?: number;
+}
+
+type PlayerListType = PlayerType[];
+
+export type {
+  PlayerType,
+  PlayerListType,
+}

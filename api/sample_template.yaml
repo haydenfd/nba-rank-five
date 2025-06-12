@@ -1,20 +1,24 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
+Description: |
   rank-six-api
 
 Globals:
   Function:
-    Timeout: 3
+    Runtime: nodejs20.x
+    MemorySize: 2048
+    Timeout: 10
+    Architectures:
+      - arm64
     Environment:
       Variables:
-        MONGODB_URI: "<INSERT_MONGODB_URI_HERE>"
-        UPSTASH_REDIS_REST_URL: "<INSERT_UPSTASH_REDIS_REST_URL_HERE>"
-        UPSTASH_REDIS_REST_TOKEN: "<INSERT_UPSTASH_REDIS_REST_TOKEN_HERE>"
-        MONGODB_DATABASE: "<INSERT_MONGODB_DATABASE_HERE>"
-        MONGODB_PLAYER_COLLECTION: "<INSERT_MONGODB_PLAYER_COLLECTION_HERE>"
-        MONGODB_USER_COLLECTION: "<INSERT_MONGODB_USER_COLLECTION_HERE>" 
-        MONGODB_SESSIONS_COLLECTION: "<INSERT_MONGODB_SESSIONS_COLLECTION_HERE>"              
+        MONGODB_URI: ''
+        UPSTASH_REDIS_REST_URL: ''
+        UPSTASH_REDIS_REST_TOKEN: ''
+        MONGODB_DATABASE: ''
+        MONGODB_PLAYER_COLLECTION: ''
+        MONGODB_USER_COLLECTION: ''
+        MONGODB_SESSIONS_COLLECTION: ''
 
 Resources:
   CreateUserFunction:
@@ -22,23 +26,18 @@ Resources:
     Properties:
       CodeUri: createUser/
       Handler: index.handler
-      Runtime: nodejs20.x
-      Timeout: 15
-      MemorySize: 2048
-      Architectures:
-        - x86_64
       Events:
         CreateUser:
           Type: HttpApi
           Properties:
-            Path: /user
+            Path: /create-user
             Method: post
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
-        Sourcemap: true
+        Target: es2020
+        Sourcemap: false
         EntryPoints:
           - index.ts
 
@@ -47,22 +46,18 @@ Resources:
     Properties:
       CodeUri: createSession/
       Handler: index.handler
-      Runtime: nodejs20.x
-      Timeout: 10
-      Architectures:
-        - x86_64
       Events:
-        FetchPlayers:
+        CreateSession:
           Type: HttpApi
           Properties:
-            Path: /sessions
+            Path: /create-session
             Method: post
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
-        Sourcemap: true
+        Target: es2020
+        Sourcemap: false
         EntryPoints:
           - index.ts
 
@@ -71,22 +66,57 @@ Resources:
     Properties:
       CodeUri: evaluateGuess/
       Handler: index.handler
-      Runtime: nodejs20.x
-      Timeout: 10
-      MemorySize: 2048
-      Architectures:
-        - x86_64
       Events:
         EvaluateGuess:
           Type: HttpApi
           Properties:
-            Path: /guess
+            Path: /evaluate-guess
             Method: post
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
-        Sourcemap: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+          - index.ts
+
+  FetchSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: fetchSession/
+      Handler: index.handler
+      Events:
+        FetchSession:
+          Type: HttpApi
+          Properties:
+            Path: /fetch-session
+            Method: post
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+          - index.ts
+
+  FetchUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: fetchUser/
+      Handler: index.handler
+      Events:
+        FetchUser:
+          Type: HttpApi
+          Properties:
+            Path: /fetch-user
+            Method: post
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
         EntryPoints:
           - index.ts

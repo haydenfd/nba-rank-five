@@ -12,9 +12,9 @@ export const Drag: React.FC = () => {
     category,
     attempts,
     setAttempts,
-    // evaluateGuesses,
-    setLastAttempt,
-    resetToLastAttempt,
+    setLastGuessesAttempt,
+    resetToLastGuessAttempt,
+    setLastGuessesCorrect,
   } = useGameContext();
 
   const onDragEnd = (result: DropResult) => {
@@ -32,7 +32,7 @@ export const Drag: React.FC = () => {
     if (attempts <= 2) {
       const nextAttempt = (attempts + 1) as AttemptsType;
       setAttempts(nextAttempt);
-      setLastAttempt(players);
+      setLastGuessesAttempt(players.map(player => player.PLAYER_ID));
     }
     // await evaluateGuesses();
   };
@@ -93,7 +93,7 @@ export const Drag: React.FC = () => {
           <div className="w-1/3 flex flex-row mx-auto items-center justify-center gap-8">
             <Button
               isDisabled={attempts === 0}
-              onClick={resetToLastAttempt}
+              onClick={resetToLastGuessAttempt}
               className="p-6 bg-slate-300 border-[4px] border-slate-700 text-slate-700 text-lg rounded-none font-bold hover:bg-slate-850 hover:border-black"
             >
               Reset to last attempt
