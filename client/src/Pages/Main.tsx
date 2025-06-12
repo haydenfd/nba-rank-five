@@ -11,16 +11,10 @@ import { useGameContext } from "../Context/GameContext";
 
 export const Main: React.FC = () => {
 const  {
-  players, 
   setPlayers,
-  attempts,
   setAttempts,
-  category,
   setCategory,
-  lastGuessesAttempt, 
   setLastGuessesAttempt,
-  resetToLastGuessAttempt,
-  lastGuessesCorrect,
   setLastGuessesCorrect
 } = useGameContext();
 
