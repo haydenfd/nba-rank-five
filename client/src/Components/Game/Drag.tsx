@@ -1,9 +1,10 @@
 import React from "react";
 import { getItemStyle, getListStyle } from "./DragDropConfigs";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { DropResult, DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { PlayerCard } from "../PlayerCard/Card";
 import { useGameContext,  AttemptsType } from "../../Context/GameContext";
+import { apiClient } from "../../Api/axiosClient";
 
 export const Drag: React.FC = () => {
   const {
@@ -15,8 +16,25 @@ export const Drag: React.FC = () => {
     setLastGuessesAttempt,
     resetToLastGuessAttempt,
     setLastGuessesCorrect,
+    lastGuessesCorrect,
   } = useGameContext();
 
+  const evaluateGuesses = async () => {
+    const { data } =  await apiClient.post<any>("/evaluate-guess", {
+      user_id: localStorage.getItem("__ranked_user_id") || "",
+      attempts: attempts + 1,
+      guesses: players.map(player => player.PLAYER_ID),
+  }, {
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+
+  setLastGuessesAttempt(data?.lastGuessesAttempt);
+  setLastGuessesCorrect(data?.lastGuessesCorrect);
+  setAttempts(data?.attempts);
+  console.log(data?.sessionResult);
+  }
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
@@ -34,7 +52,7 @@ export const Drag: React.FC = () => {
       setAttempts(nextAttempt);
       setLastGuessesAttempt(players.map(player => player.PLAYER_ID));
     }
-    // await evaluateGuesses();
+    await evaluateGuesses();
   };
 
   return (
@@ -45,6 +63,11 @@ export const Drag: React.FC = () => {
       <section className="mx-auto text-white text-xl font-medium my-2">
         Attempts left: {3 - attempts}
       </section>
+      {attempts > 0 && (
+  <section className="mx-auto text-white text-xl font-medium my-2">
+    Last attempt: {lastGuessesCorrect} correct
+  </section>
+)}    
       <div className="w-full flex flex-col items-center space-y-10 mt-6">
         <div className="w-2/3 flex flex-row justify-around px-4 py-2">
           <DragDropContext onDragEnd={onDragEnd}>

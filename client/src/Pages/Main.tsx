@@ -3,7 +3,7 @@ import { Drag } from "../Components/Game/Drag";
 import { GuideModal } from "../Components/Modals/GuideModal";
 import { StatsModal } from "../Components/Modals/StatsModal";
 import { createSession, createUser, fetchSession, fetchUser } from "../Api/services";
-import { useDisclosure, Button } from "@nextui-org/react";
+import { useDisclosure, Button } from "@heroui/react";
 import { QuestionMarkCircledIcon, BarChartIcon } from "@radix-ui/react-icons";
 import { useStatsContext } from "../Context/StatsContext";
 import { useGameContext } from "../Context/GameContext";
