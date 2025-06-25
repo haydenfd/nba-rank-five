@@ -112,7 +112,7 @@ export const Drag: React.FC = () => {
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} style={getListStyle(snapshot)} {...provided.droppableProps}>
                     {players.map((player, index) => (
-                      <Draggable key={player.PLAYER_ID} draggableId={player.PLAYER_ID.toString()} index={index}>
+                      <Draggable key={player.PLAYER_ID} draggableId={player.PLAYER_ID.toString()} index={index} isDragDisabled={!!solution}>
                         {(provided, snapshot) => (
                           <div
                             ref={provided.innerRef}

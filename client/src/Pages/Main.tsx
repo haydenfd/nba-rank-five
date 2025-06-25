@@ -78,7 +78,7 @@ export const Main: React.FC = () => {
         <div className="w-[15%] py-2 flex items-center justify-center">
           <Button
             color="default"
-            className="text-medium px-2 md:px-6 md:py-2 rounded-full md:rounded-lg bg-transparent border-2 border-transparent"
+            className="text-medium px-2 md:px-6 md:py-2 cursor-pointer rounded-full md:rounded-lg bg-transparent border-2 border-transparent"
             startContent={<BarChartIcon className="scale-[225%] text-white" />}
             onPress={openStatsModal}
           />
@@ -91,7 +91,7 @@ export const Main: React.FC = () => {
         <div className="w-[15%] py-2 flex items-center justify-center flex-shrink">
           <Button
             color="default"
-            className="text-medium px-2 md:px-6 md:py-2 rounded-full md:rounded-lg bg-transparent border-2 border-transparent"
+            className="text-medium px-2 md:px-6 md:py-2 cursor-pointer rounded-full md:rounded-lg bg-transparent border-2 border-transparent"
             startContent={<QuestionMarkCircledIcon className="scale-[225%] text-white" />}
             onPress={openGuideModal}
           />
