@@ -1,16 +1,13 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 import { StatsBox } from "./StatsBox";
-import { GenericModalsPropsInterface } from  './Types';
+import { GenericModalsPropsInterface } from "./Types";
 import { computeWeightedAvg, computeWinPercentage } from "../../Utils/StatComputations";
 import { useStatsContext } from "../../Context/StatsContext";
 
 export const StatsModal: React.FC<GenericModalsPropsInterface> = ({ isOpen, onOpenChange }) => {
   const { stats } = useStatsContext();
-  const avgAttempts = computeWeightedAvg(
-    stats.attempts_per_win_distro.slice(0, 3) as [number, number, number],
-    stats.games_won
-  );
+  const avgAttempts = computeWeightedAvg(stats.attempts_per_win_distro.slice(0, 3) as [number, number, number], stats.games_won);
 
   return (
     <Modal

@@ -1,4 +1,4 @@
-const {heroui} = require("@heroui/react");
+const { heroui } = require("@heroui/react");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -14,8 +14,8 @@ module.exports = {
         geist: ["Geist", "sans-serif"],
       },
       objectPosition: {
-        'center-top': 'center top',
-      }
+        "center-top": "center top",
+      },
     },
   },
   darkMode: "class",

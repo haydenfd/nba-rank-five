@@ -137,6 +137,7 @@ export const handler = async (
           attempts,
           sessionResult,
           updatedUser,
+          "solution": session.solution,
         }),
         headers: {
           "Access-Control-Allow-Origin": "*",

@@ -8,33 +8,18 @@ import { QuestionMarkCircledIcon, BarChartIcon } from "@radix-ui/react-icons";
 import { useStatsContext } from "../Context/StatsContext";
 import { useGameContext } from "../Context/GameContext";
 
-
 export const Main: React.FC = () => {
-const  {
-  setPlayers,
-  setAttempts,
-  setCategory,
-  setLastGuessesAttempt,
-  setLastGuessesCorrect
-} = useGameContext();
+  const { setGameState } = useGameContext();
 
   const { updateStats } = useStatsContext();
-  
-  const {
-    isOpen: isGuideModalOpen,
-    onOpen: openGuideModal,
-    onOpenChange: onGuideModalChange
-  } = useDisclosure();
 
-  const {
-    isOpen: isStatsModalOpen,
-    onOpen: openStatsModal,
-    onOpenChange: onStatsModalChange
-  } = useDisclosure();
+  const { isOpen: isGuideModalOpen, onOpen: openGuideModal, onOpenChange: onGuideModalChange } = useDisclosure();
+
+  const { isOpen: isStatsModalOpen, onOpen: openStatsModal, onOpenChange: onStatsModalChange } = useDisclosure();
   useEffect(() => {
     const initGame = async () => {
       const userIdInLocalStorage: string | null = localStorage.getItem("__ranked_user_id");
-  
+
       // New user
       if (!userIdInLocalStorage) {
         openGuideModal();
@@ -42,19 +27,30 @@ const  {
         const session = await createSession(user_id);
         localStorage.setItem("__ranked_user_id", user_id);
         localStorage.setItem("__ranked_game_state", JSON.stringify(0));
-  
-        setPlayers(session.players);
-        setCategory(session.category);
-        setAttempts(session.attempts || 0);
-        setLastGuessesAttempt(session.lastGuessesAttempt || []);
-        setLastGuessesCorrect(session.lastGuessesCorrect ?? null);
-      } 
-      
+
+        setGameState({
+          players: session.players,
+          category: session.category,
+          attempts: session.attempts ?? 0,
+          lastGuessesAttempt: session.lastGuessesAttempt ?? [],
+          lastGuessesCorrect: session.lastGuessesCorrect ?? null,
+        });
+      }
+
       // Existing user
       else {
-        const user = await fetchUser(userIdInLocalStorage);
+        const { user_id, games_played, games_won, attempts_per_win_distro, longest_streak, curr_streak } = await fetchUser(userIdInLocalStorage);
+        console.log(`user`);
+        console.log(user_id);
+        updateStats({
+          games_played,
+          games_won,
+          attempts_per_win_distro,
+          curr_streak,
+          longest_streak,
+        });
         const ranked_game_state: string | null = localStorage.getItem("__ranked_game_state");
-  
+
         let session;
         if (!ranked_game_state) {
           session = await fetchSession(userIdInLocalStorage);
@@ -62,61 +58,19 @@ const  {
           session = await createSession(userIdInLocalStorage);
           localStorage.setItem("__ranked_game_state", JSON.stringify(0));
         }
-  
-        setPlayers(session.players);
-        setCategory(session.category);
-        setAttempts(session.attempts || 0);
-        setLastGuessesAttempt(session.lastGuessesAttempt || []);
-        setLastGuessesCorrect(session.lastGuessesCorrect ?? null);
+
+        setGameState({
+          players: session.players,
+          category: session.category,
+          attempts: session.attempts ?? 0,
+          lastGuessesAttempt: session.lastGuessesAttempt ?? [],
+          lastGuessesCorrect: session.lastGuessesCorrect ?? null,
+        });
       }
     };
-  
+
     initGame();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  
-  // useEffect(() => {
-  //   const initializeGame = async () => {  
-  //     // if (savedState) {
-  //     //   try {
-  //     //     const parsed = JSON.parse(savedState);
-  //     //     if (parsed.players) setPlayers(parsed.players);
-  //     //     if (parsed.category) setCategory(parsed.category);
-  //     //     if (parsed.attempts !== undefined) setAttempts(parsed.attempts);
-  //     //     if (parsed.lastAttempt) setLastAttempt(parsed.lastAttempt);
-  //     //     if (parsed.lastAttemptCorrect !== undefined) setLastAttemptCorrect(parsed.lastAttemptCorrect);
-  //     //     return; 
-  //     //   } catch (e) {
-  //     //     console.error("Failed to restore local game state:", e);
-  //     //   }
-  //     // }
-  
-  //     const userIdLocalStorage = localStorage.getItem("ranked_user_id");
-  
-  //     try {
-  //       if (!userIdLocalStorage) {
-  //         openGuideModal();
-  //         const userResponse = await createUser();
-  //         const userId = userResponse.user_id;
-  //         localStorage.setItem("ranked_user_id", userId);
-  //         const sessionResponse = await createSession(userId);
-  //         setPlayers(sessionResponse.players);
-  //         setCategory(Categories.POINTS_PER_GAME);
-  //       } else {
-  //         const userResponse = await fetchUser(userIdLocalStorage);
-  //         updateStats(userResponse);
-  //         const sessionResponse = await fetchSession(userIdLocalStorage);
-  //         setPlayers(sessionResponse.players);
-  //         setCategory(sessionResponse.category || Categories.POINTS_PER_GAME);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error initializing game:", error);
-  //     }
-  //   };
-  
-  //   initializeGame();
-  // }, []);
-
-  
 
   return (
     <div className="w-full h-full flex flex-col pb-4">
@@ -126,7 +80,7 @@ const  {
             color="default"
             className="text-medium px-2 md:px-6 md:py-2 rounded-full md:rounded-lg bg-transparent border-2 border-transparent"
             startContent={<BarChartIcon className="scale-[225%] text-white" />}
-            onClick={openStatsModal}
+            onPress={openStatsModal}
           />
         </div>
 
@@ -139,7 +93,7 @@ const  {
             color="default"
             className="text-medium px-2 md:px-6 md:py-2 rounded-full md:rounded-lg bg-transparent border-2 border-transparent"
             startContent={<QuestionMarkCircledIcon className="scale-[225%] text-white" />}
-            onClick={openGuideModal}
+            onPress={openGuideModal}
           />
         </div>
 

@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type StatsType = {
   games_played: number;
@@ -23,19 +23,14 @@ const defaultStats: StatsType = {
 
 const StatsContext = createContext<StatsContextType | undefined>(undefined);
 
-
-export const StatsContextProvider:React.FC<{ children : ReactNode }> = ({ children }) => {
+export const StatsContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [stats, setStats] = useState<StatsType>(defaultStats);
 
   const updateStats = (newState: StatsType) => {
     setStats(newState);
   };
 
-  return (
-    <StatsContext.Provider value={{ stats, updateStats }}>
-      {children}
-    </StatsContext.Provider>
-  );
+  return <StatsContext.Provider value={{ stats, updateStats }}>{children}</StatsContext.Provider>;
 };
 
 export const useStatsContext = () => {

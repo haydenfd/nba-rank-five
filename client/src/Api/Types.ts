@@ -1,22 +1,21 @@
-
 type SessionStatusType = -1 | 0 | 1;
 type AttemptsType = 0 | 1 | 2;
 
 type PlayerDataInterface = any;
 
 export interface CreateUserResponse {
-    user_id: string;
-  }
-  
-  export interface CreateSessionResponse {
-    session_id: string;
-    players: any[]; 
-  }
-  
-  export interface FetchPlayersResponse {
-    players: any[]; 
-  }
-  
+  user_id: string;
+}
+
+export interface CreateSessionResponse {
+  session_id: string;
+  players: any[];
+}
+
+export interface FetchPlayersResponse {
+  players: any[];
+}
+
 interface CreateNewSessionResponseInterface {
   user_id: string;
   session_id: string;
@@ -46,7 +45,6 @@ interface EvaluateSessionAttemptInterface {
 
 export type { FetchSessionResponseInterface, CreateNewUserResponseInterface, CreateNewSessionResponseInterface, EvaluateSessionAttemptInterface };
 
-
 interface PlayerType {
   PLAYER_ID: number;
   PLAYER_NAME: string;
@@ -59,7 +57,4 @@ interface PlayerType {
 
 type PlayerListType = PlayerType[];
 
-export type {
-  PlayerType,
-  PlayerListType,
-}
+export type { PlayerType, PlayerListType };
